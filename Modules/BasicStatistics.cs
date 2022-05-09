@@ -1,4 +1,3 @@
-
 using System;
 
 namespace Ovation.FasterQC.Net
@@ -19,7 +18,7 @@ namespace Ovation.FasterQC.Net
         private long nCount;
         private long xCount;
 
-        private byte minimumQuality;
+        private byte minimumQuality = byte.MaxValue;
 
         public string Name => "BasicStatistics";
 
@@ -60,7 +59,19 @@ namespace Ovation.FasterQC.Net
 
         public void Reset()
         {
+            sequenceCount = 0;
 
+            minimumReadLength = int.MaxValue;
+            maximumReadLength = int.MinValue;
+
+            aCount = 0;
+            tCount = 0;
+            cCount = 0;
+            gCount = 0;
+            nCount = 0;
+            xCount = 0;
+
+            minimumQuality = byte.MaxValue;
         }
 
         public object Data => new

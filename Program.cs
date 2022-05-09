@@ -15,7 +15,8 @@ namespace Ovation.FasterQC.Net
 
         private static readonly List<IQcModule> modules = new()
         {
-            new BasicStatistics()
+            // new BasicStatistics(),
+            new KMerContent(),
         };
 
         static void Main(string[] args)
