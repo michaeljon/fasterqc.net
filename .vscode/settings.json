@@ -1,0 +1,12 @@
+{
+  "files.autoSave": "onFocusChange",
+  "omnisharp.enableRoslynAnalyzers": true,
+  "[cs]": {
+    "editor.formatOnSave": true
+  },
+  "search.exclude": {
+    "**/.git": true,
+    "**/tmp": true,
+    "**/data": true
+  }
+}
