@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace Ovation.FasterQC.Net
@@ -6,17 +7,19 @@ namespace Ovation.FasterQC.Net
     {
         private const int KMER_SIZE = 4;
 
-        private static readonly IDictionary<uint, long> kmers = new Dictionary<uint, long>();
+        private static readonly int DICTIONARY_SIZE = (int)Math.Pow(4, KMER_SIZE);
+
+        private static readonly IDictionary<uint, long> kmers = new Dictionary<uint, long>(DICTIONARY_SIZE);
 
         public string Name => "kMer content";
 
-        public string Description => "Computes kMer counts";
+        public string Description => "Computes 4-mer counts across all sequences";
 
         public object Data
         {
             get
             {
-                var result = new Dictionary<string, long>();
+                var result = new Dictionary<string, long>(DICTIONARY_SIZE);
 
                 foreach (var key in kmers.Keys)
                 {
