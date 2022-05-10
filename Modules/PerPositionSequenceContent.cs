@@ -20,9 +20,9 @@ namespace Ovation.FasterQC.Net
             get
             {
                 var aPercentage = aCounts.Select(a => Math.Round((double)a / (double)sequenceCount * 100.0, 3));
-                var cPercentage = aCounts.Select(c => Math.Round((double)c / (double)sequenceCount * 100.0, 3));
-                var tPercentage = aCounts.Select(t => Math.Round((double)t / (double)sequenceCount * 100.0, 3));
-                var gPercentage = aCounts.Select(g => Math.Round((double)g / (double)sequenceCount * 100.0, 3));
+                var cPercentage = cCounts.Select(c => Math.Round((double)c / (double)sequenceCount * 100.0, 3));
+                var tPercentage = tCounts.Select(t => Math.Round((double)t / (double)sequenceCount * 100.0, 3));
+                var gPercentage = gCounts.Select(g => Math.Round((double)g / (double)sequenceCount * 100.0, 3));
 
                 return new
                 {
