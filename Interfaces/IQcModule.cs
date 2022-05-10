@@ -1,3 +1,4 @@
+
 namespace Ovation.FasterQC.Net
 {
     public interface IQcModule

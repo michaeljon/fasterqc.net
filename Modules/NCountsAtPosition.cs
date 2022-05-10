@@ -7,7 +7,7 @@ namespace Ovation.FasterQC.Net
         private int[] nCounts = Array.Empty<int>();
         private int[] notNCounts = Array.Empty<int>();
 
-        public string Name => "N counts";
+        public string Name => "nCounts";
 
         public string Description => "Calculates N counts at position along sequence";
 

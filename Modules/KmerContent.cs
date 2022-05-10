@@ -11,7 +11,7 @@ namespace Ovation.FasterQC.Net
 
         private static readonly IDictionary<uint, long> kmers = new Dictionary<uint, long>(DICTIONARY_SIZE);
 
-        public string Name => "kMer content";
+        public string Name => "kmerContent";
 
         public string Description => "Computes 4-mer counts across all sequences";
 

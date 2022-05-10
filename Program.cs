@@ -15,11 +15,13 @@ namespace Ovation.FasterQC.Net
 
         private static readonly List<IQcModule> modules = new()
         {
-            // new BasicStatistics(),
-            // new KMerContent(),
-            // new NCountsAtPosition(),
-            // new PerPositionSequenceContent(),
-            new PerSequenceGcContent()
+            new BasicStatistics(),
+            new KMerContent(),
+            new NCountsAtPosition(),
+            new PerPositionSequenceContent(),
+            new PerSequenceGcContent(),
+            new QualityDistribution(),
+            new SequenceLengthDistribution()
         };
 
         static void Main(string[] args)
@@ -36,10 +38,12 @@ namespace Ovation.FasterQC.Net
                 }
             }
 
+            var results = new Dictionary<string, object>();
             foreach (var module in modules)
             {
-                Console.WriteLine(JsonSerializer.Serialize(module.Data, options));
+                results[module.Name] = module.Data;
             }
+            Console.WriteLine(JsonSerializer.Serialize(results, options));
         }
 
         static bool ReadSequence(BinaryReader binaryReader, out Sequence sequence)
@@ -75,7 +79,7 @@ namespace Ovation.FasterQC.Net
             }
             catch (EndOfStreamException)
             {
-                Console.WriteLine("End of stream");
+                Console.Error.WriteLine("End of stream");
                 sequence = null;
                 return false;
             }

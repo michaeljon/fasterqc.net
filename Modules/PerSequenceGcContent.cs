@@ -4,9 +4,9 @@ namespace Ovation.FasterQC.Net
     {
         private static readonly ulong[] gcContent = new ulong[101];
 
-        public string Name => "Per sequence GC content";
+        public string Name => "gcDistribution";
 
-        public string Description => "Calculates the GC percentage by read length";
+        public string Description => "Distribution of GC content percentages";
 
         public object Data
         {

@@ -11,9 +11,9 @@ namespace Ovation.FasterQC.Net
         private int[] gCounts = Array.Empty<int>();
         private long sequenceCount;
 
-        public string Name => "N counts";
+        public string Name => "baseCounts";
 
-        public string Description => "Calculates N counts at position along sequence";
+        public string Description => "Calculates ATCG counts at position along sequence";
 
         public object Data
         {

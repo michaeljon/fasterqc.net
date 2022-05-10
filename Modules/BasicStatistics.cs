@@ -20,7 +20,7 @@ namespace Ovation.FasterQC.Net
 
         private byte minimumQuality = byte.MaxValue;
 
-        public string Name => "BasicStatistics";
+        public string Name => "basicStats";
 
         public string Description => "Calculates basic quality statistics";
 
