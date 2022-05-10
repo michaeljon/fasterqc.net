@@ -10,7 +10,9 @@ namespace Ovation.FasterQC.Net
     {
         private static readonly JsonSerializerOptions options = new()
         {
-            WriteIndented = true
+            WriteIndented = true,
+            DictionaryKeyPolicy = JsonNamingPolicy.CamelCase,
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
         };
 
         private static readonly List<IQcModule> modules = new()
@@ -21,7 +23,8 @@ namespace Ovation.FasterQC.Net
             new PerPositionSequenceContent(),
             new PerSequenceGcContent(),
             new QualityDistribution(),
-            new SequenceLengthDistribution()
+            new SequenceLengthDistribution(),
+            new PerPositionQuality()
         };
 
         static void Main(string[] args)

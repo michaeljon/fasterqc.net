@@ -5,11 +5,11 @@ namespace Ovation.FasterQC.Net
 {
     public class PerPositionSequenceContent : IQcModule
     {
-        private int[] aCounts = Array.Empty<int>();
-        private int[] cCounts = Array.Empty<int>();
-        private int[] tCounts = Array.Empty<int>();
-        private int[] gCounts = Array.Empty<int>();
-        private long sequenceCount;
+        private ulong[] aCounts = Array.Empty<ulong>();
+        private ulong[] cCounts = Array.Empty<ulong>();
+        private ulong[] tCounts = Array.Empty<ulong>();
+        private ulong[] gCounts = Array.Empty<ulong>();
+        private ulong sequenceCount;
 
         public string Name => "baseCounts";
 
@@ -63,10 +63,10 @@ namespace Ovation.FasterQC.Net
 
         public void Reset()
         {
-            aCounts = Array.Empty<int>();
-            cCounts = Array.Empty<int>();
-            tCounts = Array.Empty<int>();
-            gCounts = Array.Empty<int>();
+            aCounts = Array.Empty<ulong>();
+            cCounts = Array.Empty<ulong>();
+            tCounts = Array.Empty<ulong>();
+            gCounts = Array.Empty<ulong>();
             sequenceCount = 0;
         }
     }

@@ -8,7 +8,7 @@ namespace Ovation.FasterQC.Net
         private int minimumReadLength = int.MaxValue;
         private int maximumReadLength = int.MinValue;
 
-        private static readonly IDictionary<int, long> lengths = new Dictionary<int, long>();
+        private static readonly IDictionary<int, ulong> lengths = new Dictionary<int, ulong>();
 
         public string Name => "sequenceLengthDistribution";
 
@@ -18,18 +18,18 @@ namespace Ovation.FasterQC.Net
         {
             get
             {
-                var results = new long[maximumReadLength + 1];
+                var distribution = new ulong[maximumReadLength + 1];
 
                 foreach (var (length, count) in lengths)
                 {
-                    results[length] = count;
+                    distribution[length] = count;
                 }
 
                 return new
                 {
                     minimumReadLength,
                     maximumReadLength,
-                    results
+                    distribution
                 };
             }
         }

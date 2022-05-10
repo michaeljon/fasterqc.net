@@ -10,7 +10,7 @@ namespace Ovation.FasterQC.Net
         // the lowest quality score is '!' and the highest is '~',
         // but, we're just going to record an integer in every
         // position and fix it when someone asks
-        private readonly long[] qualityScores = new long[128];
+        private readonly ulong[] qualityScores = new ulong[128];
 
         private byte lowestScore = byte.MaxValue;
 
@@ -24,18 +24,18 @@ namespace Ovation.FasterQC.Net
         {
             get
             {
-                var results = new Dictionary<int, long>();
+                var distribution = new Dictionary<int, ulong>();
 
                 for (var score = lowestScore; score <= highestScore; score++)
                 {
-                    results.Add(score - ILLUMINA_BASE_ADJUSTMENT, qualityScores[score]);
+                    distribution.Add(score - ILLUMINA_BASE_ADJUSTMENT, qualityScores[score]);
                 }
 
                 return new
                 {
                     lowestScore = lowestScore - ILLUMINA_BASE_ADJUSTMENT,
                     highestScore = highestScore - ILLUMINA_BASE_ADJUSTMENT,
-                    results
+                    distribution
                 };
             }
         }

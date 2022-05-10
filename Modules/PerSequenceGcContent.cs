@@ -8,16 +8,7 @@ namespace Ovation.FasterQC.Net
 
         public string Description => "Distribution of GC content percentages";
 
-        public object Data
-        {
-            get
-            {
-                return new
-                {
-                    gcContent
-                };
-            }
-        }
+        public object Data => gcContent;
 
         public void ProcessSequence(Sequence sequence)
         {

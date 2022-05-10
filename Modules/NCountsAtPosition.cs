@@ -7,7 +7,7 @@ namespace Ovation.FasterQC.Net
         private int[] nCounts = Array.Empty<int>();
         private int[] notNCounts = Array.Empty<int>();
 
-        public string Name => "nCounts";
+        public string Name => "nPercentages";
 
         public string Description => "Calculates N counts at position along sequence";
 
@@ -26,7 +26,7 @@ namespace Ovation.FasterQC.Net
                 return new
                 {
                     length = result.Length,
-                    counts = result
+                    percentages = result
                 };
             }
         }

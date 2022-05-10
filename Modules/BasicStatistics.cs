@@ -4,19 +4,19 @@ namespace Ovation.FasterQC.Net
 {
     public class BasicStatistics : IQcModule
     {
-        private long sequenceCount;
+        private ulong sequenceCount;
 
         private int minimumReadLength = int.MaxValue;
         private int maximumReadLength = int.MinValue;
 
-        private long totalBases;
+        private ulong totalBases;
 
-        private long aCount;
-        private long tCount;
-        private long cCount;
-        private long gCount;
-        private long nCount;
-        private long xCount;
+        private ulong aCount;
+        private ulong tCount;
+        private ulong cCount;
+        private ulong gCount;
+        private ulong nCount;
+        private ulong xCount;
 
         private byte minimumQuality = byte.MaxValue;
 
@@ -28,7 +28,7 @@ namespace Ovation.FasterQC.Net
         {
             var sequenceLength = sequence.Read.Length;
 
-            totalBases += sequenceLength;
+            totalBases += (ulong)sequenceLength;
             sequenceCount++;
 
             minimumReadLength = Math.Min(minimumReadLength, sequenceLength);
@@ -89,7 +89,7 @@ namespace Ovation.FasterQC.Net
 
             minimumQuality,
 
-            gcContent = (double)(cCount + gCount) / (double)totalBases,
+            gcContent = Math.Round((double)(cCount + gCount) / (double)totalBases * 100.0, 3),
 
             minimumReadLength,
             maximumReadLength
