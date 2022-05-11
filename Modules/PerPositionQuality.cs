@@ -18,11 +18,11 @@ namespace Ovation.FasterQC.Net
         {
             get
             {
-                var metrics = new QualityMetric[maximumReadLength];
+                var metrics = new object[maximumReadLength];
 
                 foreach (var (position, quality) in qualities)
                 {
-                    metrics[position] = quality;
+                    metrics[position] = quality.Metric;
                 }
 
                 return metrics;
@@ -93,21 +93,21 @@ namespace Ovation.FasterQC.Net
                     sumOfValues += (ulong)pos * count;
                 }
 
-                var sumOfDistribution = 0UL;
+                var sumOfDistribution = 0.0;
                 foreach (var count in distribution.Values)
                 {
                     sumOfDistribution += count;
                 }
 
-                var mean = sumOfValues / sumOfDistribution;
+                var mean = (double)sumOfValues / (double)sumOfDistribution;
 
-                var sumOfSquares = 0UL;
+                var sumOfSquares = 0.0;
                 foreach (var (pos, count) in distribution)
                 {
-                    sumOfValues += (ulong)Math.Pow((ulong)pos - mean, 2) * count;
+                    sumOfSquares += Math.Pow((ulong)pos - mean, 2) * count;
                 }
 
-                var stdev = Math.Round(Math.Sqrt(sumOfSquares / sumOfDistribution), 3);
+                var stdev = Math.Sqrt(sumOfSquares / sumOfDistribution);
 
                 return new
                 {

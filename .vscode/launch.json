@@ -11,9 +11,7 @@
       "preLaunchTask": "build",
       // If you have changed target frameworks, make sure to update the program path.
       "program": "${workspaceFolder}/bin/Debug/net5.0/Ovation.FasterQC.Net.dll",
-      "args": [
-        "/Users/michaeljon/src/ll/interval-builder/working/pipeline/DPZw_k_R1.fastq.gz"
-      ],
+      "args": ["zr6401_1.combined.fastq.gz"],
       "cwd": "${workspaceFolder}",
       // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console
       "console": "internalConsole",

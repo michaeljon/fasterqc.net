@@ -1,5 +1,5 @@
 using System;
-using System.Collections.Generic;
+using System.Linq;
 
 namespace Ovation.FasterQC.Net
 {
@@ -24,18 +24,11 @@ namespace Ovation.FasterQC.Net
         {
             get
             {
-                var distribution = new Dictionary<int, ulong>();
-
-                for (var score = lowestScore; score <= highestScore; score++)
-                {
-                    distribution.Add(score - ILLUMINA_BASE_ADJUSTMENT, qualityScores[score]);
-                }
-
                 return new
                 {
                     lowestScore = lowestScore - ILLUMINA_BASE_ADJUSTMENT,
                     highestScore = highestScore - ILLUMINA_BASE_ADJUSTMENT,
-                    distribution
+                    distribution = qualityScores.Skip(lowestScore).Take(highestScore - lowestScore + 1)
                 };
             }
         }
