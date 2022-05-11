@@ -1,3 +1,5 @@
+using System;
+
 namespace Ovation.FasterQC.Net
 {
     public class PerSequenceGcContent : IQcModule
@@ -24,7 +26,7 @@ namespace Ovation.FasterQC.Net
                 }
             }
 
-            var gcPercentage = (int)((double)gcCount / (double)sequenceLength * 100.0);
+            var gcPercentage = (int)Math.Round(((double)gcCount / (double)sequenceLength * 100.0), 0);
 
             gcContent[gcPercentage]++;
         }
