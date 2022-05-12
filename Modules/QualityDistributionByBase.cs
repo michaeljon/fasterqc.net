@@ -6,8 +6,6 @@ namespace Ovation.FasterQC.Net
 {
     public class QualityDistributionByBase : IQcModule
     {
-        private const byte ILLUMINA_BASE_ADJUSTMENT = 33;
-
         private readonly IDictionary<byte, ulong[]> qualityScores = new Dictionary<byte, ulong[]>();
 
         private byte lowestScore = byte.MaxValue;
