@@ -16,7 +16,7 @@ namespace Ovation.FasterQC.Net
 
         private byte highestScore = byte.MinValue;
 
-        public string Name => "qualityDistribution";
+        public string Name => "qualityDistributionByATCG";
 
         public string Description => "Calculates the quality distribution across all sequences";
 
