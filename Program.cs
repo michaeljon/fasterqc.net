@@ -15,15 +15,15 @@ namespace Ovation.FasterQC.Net
 
         private static readonly List<IQcModule> modules = new()
         {
-            // new BasicStatistics(),
-            // new KMerContent(),
-            // new NCountsAtPosition(),
-            // new PerPositionSequenceContent(),
-            // new PerSequenceGcContent(),
+            new BasicStatistics(),
+            new KMerContent(),
+            new NCountsAtPosition(),
+            new PerPositionSequenceContent(),
+            new PerSequenceGcContent(),
             new QualityDistributionByBase(),
-            // new MeanQualityDistribution(),
-            // new SequenceLengthDistribution(),
-            // new PerPositionQuality()
+            new MeanQualityDistribution(),
+            new SequenceLengthDistribution(),
+            new PerPositionQuality()
         };
 
         static void Main(string[] args)
