@@ -88,25 +88,24 @@ namespace Ovation.FasterQC.Net
                 // loop unroll and shift right if we find an N
                 if (read[s + 3] == (byte)'N')
                 {
-                    s += 4;
+                    s += 3;
                     continue;
                 }
 
                 if (read[s + 2] == (byte)'N')
                 {
-                    s += 3;
+                    s += 2;
                     continue;
                 }
 
                 if (read[s + 1] == (byte)'N')
                 {
-                    s += 2;
+                    s += 1;
                     continue;
                 }
 
                 if (read[s] == (byte)'N')
                 {
-                    s += 1;
                     continue;
                 }
 
