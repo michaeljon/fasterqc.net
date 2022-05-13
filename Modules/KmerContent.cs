@@ -20,15 +20,15 @@ namespace Ovation.FasterQC.Net
             get
             {
                 var result = new Dictionary<string, ulong>(DICTIONARY_SIZE);
-                var index = new char[4];
+                var kmer = new char[4];
 
-                for (int k = 0; k < DICTIONARY_SIZE; k++)
+                for (int i = 0; i < DICTIONARY_SIZE; i++)
                 {
-                    var count = kmers[k];
+                    var count = kmers[i];
                     if (count == 0)
                         continue;
 
-                    index[3] = ((k & 0b11000000) >> 6) switch
+                    kmer[3] = ((i & 0b11000000) >> 6) switch
                     {
                         0b00 => 'A',
                         0b01 => 'C',
@@ -37,7 +37,7 @@ namespace Ovation.FasterQC.Net
                         _ => ' '
                     };
 
-                    index[2] = ((k & 0b00110000) >> 4) switch
+                    kmer[2] = ((i & 0b00110000) >> 4) switch
                     {
                         0b00 => 'A',
                         0b01 => 'C',
@@ -46,7 +46,7 @@ namespace Ovation.FasterQC.Net
                         _ => ' '
                     };
 
-                    index[1] = ((k & 0b00001100) >> 2) switch
+                    kmer[1] = ((i & 0b00001100) >> 2) switch
                     {
                         0b00 => 'A',
                         0b01 => 'C',
@@ -55,7 +55,7 @@ namespace Ovation.FasterQC.Net
                         _ => ' '
                     };
 
-                    index[0] = (k & 0b00000011) switch
+                    kmer[0] = (i & 0b00000011) switch
                     {
                         0b00 => 'A',
                         0b01 => 'C',
@@ -64,10 +64,7 @@ namespace Ovation.FasterQC.Net
                         _ => ' '
                     };
 
-                    var kmer = new string(index);
-                    Console.Error.WriteLine($"{k} => {kmer} => {kmers[k]}");
-
-                    result.Add(kmer, count);
+                    result.Add(new string(kmer), count);
                 }
 
                 return result;
@@ -86,7 +83,7 @@ namespace Ovation.FasterQC.Net
 
             for (var s = 0; s < sequenceLength - KMER_SIZE; s++)
             {
-                byte index = 0;
+                byte kmer = 0;
 
                 // we're not going to count any kmers with an N, we could be smarter and set s to the
                 // last read with an N to shorten our traversal, but for now...
@@ -96,7 +93,7 @@ namespace Ovation.FasterQC.Net
                 }
 
                 // loop unroll
-                index |= (byte)(read[s] switch
+                kmer |= (byte)(read[s] switch
                 {
                     (byte)'A' => 0b00,
                     (byte)'C' => 0b01,
@@ -105,7 +102,7 @@ namespace Ovation.FasterQC.Net
                     _ => 0
                 } << 6);
 
-                index |= (byte)(read[s + 1] switch
+                kmer |= (byte)(read[s + 1] switch
                 {
                     (byte)'A' => 0b00,
                     (byte)'C' => 0b01,
@@ -114,7 +111,7 @@ namespace Ovation.FasterQC.Net
                     _ => 0
                 } << 4);
 
-                index |= (byte)(read[s + 2] switch
+                kmer |= (byte)(read[s + 2] switch
                 {
                     (byte)'A' => 0b00,
                     (byte)'C' => 0b01,
@@ -123,7 +120,7 @@ namespace Ovation.FasterQC.Net
                     _ => 0
                 } << 2);
 
-                index |= (byte)(read[s + 3] switch
+                kmer |= (byte)(read[s + 3] switch
                 {
                     (byte)'A' => 0b00,
                     (byte)'C' => 0b01,
@@ -132,7 +129,7 @@ namespace Ovation.FasterQC.Net
                     _ => 0
                 });
 
-                kmers[index]++;
+                kmers[kmer]++;
             }
         }
 
