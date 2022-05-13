@@ -5,6 +5,13 @@ namespace Ovation.FasterQC.Net
 {
     public class KMerContent : IQcModule
     {
+        //
+        // pay careful attention to the structure of this code, it's not a
+        // typical set of loops. at the expensive of some binary size
+        // we're trading off loop management
+        //
+        // https://en.wikipedia.org/wiki/Loop_unrolling
+        //
         private static readonly int KMER_SIZE = 4;
 
         private static readonly int DICTIONARY_SIZE = (int)Math.Pow(4, KMER_SIZE);
