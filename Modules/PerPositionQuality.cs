@@ -43,7 +43,7 @@ namespace Ovation.FasterQC.Net
             }
 
             var qual = sequence.Quality;
-            for (var q = 0; q < qual.Length; q++)
+            for (var q = 0; q < sequenceLength; q++)
             {
                 if (qualities[q] == null)
                 {

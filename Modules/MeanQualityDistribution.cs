@@ -35,11 +35,13 @@ namespace Ovation.FasterQC.Net
 
         public void ProcessSequence(Sequence sequence)
         {
+            var sequenceLength = sequence.Quality.Length;
+
             var sum = 0;
             var count = 0;
 
             var qual = sequence.Quality;
-            for (var q = 0; q < qual.Length; q++)
+            for (var q = 0; q < sequenceLength; q++)
             {
                 lowestScore = Math.Min(lowestScore, qual[q]);
                 highestScore = Math.Max(highestScore, qual[q]);

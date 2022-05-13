@@ -49,7 +49,7 @@ namespace Ovation.FasterQC.Net
             }
 
             var read = sequence.Read;
-            for (var i = 0; i < read.Length; i++)
+            for (var i = 0; i < sequenceLength; i++)
             {
                 switch (read[i])
                 {
