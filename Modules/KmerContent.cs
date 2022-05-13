@@ -5,9 +5,9 @@ namespace Ovation.FasterQC.Net
 {
     public class KMerContent : IQcModule
     {
-        private const int KMER_SIZE = 4;
+        private static readonly int KMER_SIZE = 4;
 
-        private readonly int DICTIONARY_SIZE = (int)Math.Pow(4, KMER_SIZE);
+        private static readonly int DICTIONARY_SIZE = (int)Math.Pow(4, KMER_SIZE);
 
         private readonly ulong[] kmers = new ulong[DICTIONARY_SIZE];
 
