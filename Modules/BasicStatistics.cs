@@ -34,10 +34,12 @@ namespace Ovation.FasterQC.Net
             minimumReadLength = Math.Min(minimumReadLength, sequenceLength);
             maximumReadLength = Math.Max(maximumReadLength, sequenceLength);
 
-            var chars = sequence.Read.ToArray();
-            for (var c = 0; c < chars.Length; c++)
+            var reads = sequence.Read;
+            var quals = sequence.Quality;
+
+            for (var i = 0; i < sequenceLength; i++)
             {
-                switch (chars[c])
+                switch (reads[i])
                 {
                     case (byte)'G': gCount++; break;
                     case (byte)'A': aCount++; break;
@@ -48,12 +50,8 @@ namespace Ovation.FasterQC.Net
                         xCount++;
                         break;
                 }
-            }
 
-            var qual = sequence.Quality.ToArray();
-            for (var c = 0; c < qual.Length; c++)
-            {
-                minimumQuality = Math.Min(minimumQuality, qual[c]);
+                minimumQuality = Math.Min(minimumQuality, quals[i]);
             }
         }
 

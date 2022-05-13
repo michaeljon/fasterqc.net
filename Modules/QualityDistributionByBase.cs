@@ -1,12 +1,15 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace Ovation.FasterQC.Net
 {
     public class QualityDistributionByBase : IQcModule
     {
-        private readonly IDictionary<byte, ulong[]> qualityScores = new Dictionary<byte, ulong[]>();
+        private ulong[] aQuality = Array.Empty<ulong>();
+        private ulong[] cQuality = Array.Empty<ulong>();
+        private ulong[] tQuality = Array.Empty<ulong>();
+        private ulong[] gQuality = Array.Empty<ulong>();
+
 
         private byte lowestScore = byte.MaxValue;
 
@@ -22,36 +25,54 @@ namespace Ovation.FasterQC.Net
             {
                 return new
                 {
-                    aDistribution = qualityScores[(byte)'A'].Skip(lowestScore).Take(highestScore - lowestScore + 1),
-                    cDistribution = qualityScores[(byte)'C'].Skip(lowestScore).Take(highestScore - lowestScore + 1),
-                    tDistribution = qualityScores[(byte)'T'].Skip(lowestScore).Take(highestScore - lowestScore + 1),
-                    gDistribution = qualityScores[(byte)'G'].Skip(lowestScore).Take(highestScore - lowestScore + 1),
+                    aDistribution = aQuality.Skip(lowestScore).Take(highestScore - lowestScore + 1),
+                    cDistribution = cQuality.Skip(lowestScore).Take(highestScore - lowestScore + 1),
+                    tDistribution = tQuality.Skip(lowestScore).Take(highestScore - lowestScore + 1),
+                    gDistribution = gQuality.Skip(lowestScore).Take(highestScore - lowestScore + 1),
                 };
             }
         }
 
         public void ProcessSequence(Sequence sequence)
         {
-            var quals = sequence.Quality.ToArray();
-            var chars = sequence.Read.ToArray();
+            var sequenceLength = sequence.Read.Length;
 
-            for (var i = 0; i < quals.Length; i++)
+            var quals = sequence.Quality;
+            var chars = sequence.Read;
+
+            // see if we need to resize this
+            if (sequenceLength > aQuality.Length)
             {
+                Array.Resize(ref aQuality, sequenceLength);
+                Array.Resize(ref cQuality, sequenceLength);
+                Array.Resize(ref tQuality, sequenceLength);
+                Array.Resize(ref gQuality, sequenceLength);
+            }
+
+            for (var i = 0; i < sequenceLength; i++)
+            {
+                var qual = quals[i];
+                var read = chars[i];
+
                 lowestScore = Math.Min(lowestScore, quals[i]);
                 highestScore = Math.Max(highestScore, quals[i]);
 
-                if (qualityScores.ContainsKey(chars[i]) == false)
+                switch (read)
                 {
-                    qualityScores.Add(chars[i], new ulong[128]);
+                    case (byte)'A': aQuality[qual]++; break;
+                    case (byte)'C': cQuality[qual]++; break;
+                    case (byte)'T': tQuality[qual]++; break;
+                    case (byte)'G': gQuality[qual]++; break;
                 }
-
-                qualityScores[chars[i]][quals[i]]++;
             }
         }
 
         public void Reset()
         {
-            qualityScores.Clear();
+            aQuality = Array.Empty<ulong>();
+            cQuality = Array.Empty<ulong>();
+            tQuality = Array.Empty<ulong>();
+            gQuality = Array.Empty<ulong>();
 
             lowestScore = byte.MaxValue;
             highestScore = byte.MinValue;

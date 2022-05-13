@@ -14,15 +14,26 @@ namespace Ovation.FasterQC.Net
 
         private readonly GZipStream gzipStream;
 
+        private readonly BufferedStream bufferedStream;
+
         private readonly BinaryReader binaryReader;
 
         private bool disposedValue;
 
         public BamReader(string bam)
         {
-            inputStream = File.Open(bam, FileMode.Open);
+            var bufferSize = 128 * 1024;
+
+            var fileStreamOptions = new FileStreamOptions()
+            {
+                Mode = FileMode.Open,
+                BufferSize = bufferSize,
+            };
+
+            inputStream = File.Open(bam, fileStreamOptions);
             gzipStream = new GZipStream(inputStream, CompressionMode.Decompress);
-            binaryReader = new BinaryReader(gzipStream);
+            bufferedStream = new BufferedStream(gzipStream, bufferSize);
+            binaryReader = new BinaryReader(bufferedStream);
 
             ConsumeHeader();
         }
@@ -41,6 +52,11 @@ namespace Ovation.FasterQC.Net
                 sequence = null;
                 return false;
             }
+        }
+
+        public int ApproximateCompletion()
+        {
+            return (int)((double)inputStream.Position / (double)inputStream.Length * 100.0);
         }
 
         private void ConsumeHeader()
@@ -155,6 +171,7 @@ namespace Ovation.FasterQC.Net
                 if (disposing)
                 {
                     binaryReader?.Dispose();
+                    bufferedStream?.Dispose();
                     gzipStream?.Dispose();
                     inputStream?.Dispose();
                 }

@@ -1,10 +1,11 @@
 using System;
 using System.IO;
 using System.IO.Compression;
+using System.Text;
 
 namespace Ovation.FasterQC.Net
 {
-    public class FastqReader : ISequenceReader
+    public class FastqLineReader : ISequenceReader
     {
         private readonly FileStream inputStream;
 
@@ -12,11 +13,11 @@ namespace Ovation.FasterQC.Net
 
         private readonly BufferedStream bufferedStream;
 
-        private readonly BinaryReader binaryReader;
+        private readonly StreamReader streamReader;
 
         private bool disposedValue;
 
-        public FastqReader(string fastq, bool gzipped = true)
+        public FastqLineReader(string fastq, bool gzipped = true)
         {
             var bufferSize = 128 * 1024;
 
@@ -31,48 +32,33 @@ namespace Ovation.FasterQC.Net
                 inputStream = File.Open(fastq, fileStreamOptions);
                 gzipStream = new GZipStream(inputStream, CompressionMode.Decompress);
                 bufferedStream = new BufferedStream(gzipStream, bufferSize);
-                binaryReader = new BinaryReader(bufferedStream);
+                streamReader = new StreamReader(bufferedStream, Encoding.ASCII, false, bufferSize);
             }
             else
             {
                 inputStream = File.Open(fastq, fileStreamOptions);
                 bufferedStream = new BufferedStream(inputStream, bufferSize);
-                binaryReader = new BinaryReader(bufferedStream);
+                streamReader = new StreamReader(bufferedStream, Encoding.ASCII, false, bufferSize);
             }
         }
 
         public bool ReadSequence(out Sequence sequence)
         {
-            // this is clearly dangerous, instead read a large chunk of the file
-            // and then walk through it returning only the consumed portion while
-            // keeping track of the last byte consumed on the stream
-            byte[] bytes = new byte[1024];
-
-            int offset = 0;
-            int line = 0;
-            int[] endOfLines = new int[4];
-
             try
             {
-                while (line < 4)
+                if (streamReader.EndOfStream == true)
                 {
-                    var b = binaryReader.ReadByte();
-                    if (b == (byte)'\n')
-                    {
-                        endOfLines[line++] = offset;
-                    }
-                    else
-                    {
-                        bytes[offset++] = b;
-                    }
+                    Console.Error.WriteLine("End of stream");
+                    sequence = null;
+                    return false;
                 }
 
-                for (var read = endOfLines[1]; read < endOfLines[2]; read++)
-                {
-                    bytes[read] &= 0xdf;
-                }
+                var identifier = Encoding.ASCII.GetBytes(streamReader.ReadLine());
+                var read = Encoding.ASCII.GetBytes(streamReader.ReadLine());
+                var blank = Encoding.ASCII.GetBytes(streamReader.ReadLine());
+                var quality = Encoding.ASCII.GetBytes(streamReader.ReadLine());
 
-                sequence = new Sequence(bytes, endOfLines);
+                sequence = new Sequence(identifier, read, blank, quality);
                 return true;
             }
             catch (EndOfStreamException)
@@ -94,7 +80,7 @@ namespace Ovation.FasterQC.Net
             {
                 if (disposing)
                 {
-                    binaryReader?.Dispose();
+                    streamReader?.Dispose();
                     bufferedStream?.Dispose();
                     gzipStream?.Dispose();
                     inputStream?.Dispose();

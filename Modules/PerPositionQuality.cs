@@ -5,7 +5,7 @@ namespace Ovation.FasterQC.Net
 {
     public class PerPositionQuality : IQcModule
     {
-        private readonly IDictionary<int, QualityMetric> qualities = new Dictionary<int, QualityMetric>();
+        private QualityMetric[] qualities = Array.Empty<QualityMetric>();
 
         private int minimumReadLength = int.MaxValue;
         private int maximumReadLength = int.MinValue;
@@ -20,9 +20,9 @@ namespace Ovation.FasterQC.Net
             {
                 var metrics = new object[maximumReadLength];
 
-                foreach (var (position, quality) in qualities)
+                for (var position = 0; position < qualities.Length; position++)
                 {
-                    metrics[position] = quality.Metric;
+                    metrics[position] = qualities[position].Metric;
                 }
 
                 return metrics;
@@ -36,17 +36,23 @@ namespace Ovation.FasterQC.Net
             minimumReadLength = Math.Min(minimumReadLength, sequenceLength);
             maximumReadLength = Math.Max(maximumReadLength, sequenceLength);
 
-            var chars = sequence.Quality.ToArray();
-            for (var c = 0; c < chars.Length; c++)
+            // see if we need to resize this
+            if (sequenceLength > qualities.Length)
             {
-                if (qualities.ContainsKey(c) == false)
+                Array.Resize(ref qualities, sequenceLength);
+            }
+
+            var qual = sequence.Quality;
+            for (var q = 0; q < qual.Length; q++)
+            {
+                if (qualities[q] == null)
                 {
-                    qualities[c] = new QualityMetric(c + 1);
+                    qualities[q] = new QualityMetric(q + 1);
                 }
 
-                qualities[c].lowestScore = Math.Min(qualities[c].lowestScore, chars[c]);
-                qualities[c].highestScore = Math.Max(qualities[c].highestScore, chars[c]);
-                qualities[c].qualityScores[chars[c]]++;
+                qualities[q].lowestScore = Math.Min(qualities[q].lowestScore, qual[q]);
+                qualities[q].highestScore = Math.Max(qualities[q].highestScore, qual[q]);
+                qualities[q].qualityScores[qual[q]]++;
             }
         }
 
@@ -55,7 +61,7 @@ namespace Ovation.FasterQC.Net
             minimumReadLength = int.MaxValue;
             maximumReadLength = int.MinValue;
 
-            qualities.Clear();
+            qualities = Array.Empty<QualityMetric>();
         }
     }
 

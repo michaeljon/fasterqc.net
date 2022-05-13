@@ -48,15 +48,15 @@ namespace Ovation.FasterQC.Net
                 Array.Resize(ref gCounts, sequenceLength);
             }
 
-            var chars = sequence.Read.ToArray();
-            for (var c = 0; c < chars.Length; c++)
+            var read = sequence.Read;
+            for (var i = 0; i < read.Length; i++)
             {
-                switch (chars[c])
+                switch (read[i])
                 {
-                    case (byte)'A': aCounts[c]++; break;
-                    case (byte)'C': cCounts[c]++; break;
-                    case (byte)'T': tCounts[c]++; break;
-                    case (byte)'G': gCounts[c]++; break;
+                    case (byte)'A': aCounts[i]++; break;
+                    case (byte)'C': cCounts[i]++; break;
+                    case (byte)'T': tCounts[i]++; break;
+                    case (byte)'G': gCounts[i]++; break;
                 }
             }
         }

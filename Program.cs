@@ -28,22 +28,24 @@ namespace Ovation.FasterQC.Net
 
         static void Main(string[] args)
         {
-            using var bamReader = new FastqReader(args[0]);
+            using var sequenceReader = new FastqLineReader(args[0], false);
 
             var sequencesProcessed = 0;
 
-            while (bamReader.ReadSequence(out Sequence sequence))
+            while (sequenceReader.ReadSequence(out Sequence sequence))
             {
                 foreach (var module in modules)
                 {
                     module.ProcessSequence(sequence);
                 }
 
-                if (++sequencesProcessed % 10000000 == 0)
+                if (++sequencesProcessed % 100000 == 0)
                 {
-                    Console.Error.WriteLine($"{sequencesProcessed} sequences completed");
+                    Console.Error.WriteLine($"{sequencesProcessed} sequences completed ~{sequenceReader.ApproximateCompletion()}%");
                 }
             }
+
+            Console.Error.WriteLine($"{sequencesProcessed} sequences processed");
 
             var results = new Dictionary<string, object>();
             foreach (var module in modules)

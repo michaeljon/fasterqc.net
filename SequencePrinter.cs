@@ -6,10 +6,10 @@ namespace Ovation.FasterQC.Net
     {
         public static void PrintSequence(Sequence sequence)
         {
-            var identifier = sequence.Identifier.ToArray();
-            var readData = sequence.Read.ToArray();
-            var blank = sequence.Blank.ToArray();
-            var quality = sequence.Quality.ToArray();
+            var identifier = sequence.Identifier;
+            var readData = sequence.Read;
+            var blank = sequence.Blank;
+            var quality = sequence.Quality;
 
             for (var id = 0; id < identifier.Length; id++)
             {

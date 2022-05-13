@@ -38,13 +38,13 @@ namespace Ovation.FasterQC.Net
             var sum = 0;
             var count = 0;
 
-            var chars = sequence.Quality.ToArray();
-            for (var c = 0; c < chars.Length; c++)
+            var qual = sequence.Quality;
+            for (var q = 0; q < qual.Length; q++)
             {
-                lowestScore = Math.Min(lowestScore, chars[c]);
-                highestScore = Math.Max(highestScore, chars[c]);
+                lowestScore = Math.Min(lowestScore, qual[q]);
+                highestScore = Math.Max(highestScore, qual[q]);
 
-                sum += chars[c];
+                sum += qual[q];
                 count++;
             }
 

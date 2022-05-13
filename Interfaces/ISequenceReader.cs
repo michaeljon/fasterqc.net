@@ -5,5 +5,7 @@ namespace Ovation.FasterQC.Net
     public interface ISequenceReader : IDisposable
     {
         bool ReadSequence(out Sequence sequence);
+
+        int ApproximateCompletion();
     }
 }

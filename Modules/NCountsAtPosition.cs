@@ -42,16 +42,16 @@ namespace Ovation.FasterQC.Net
                 Array.Resize(ref notNCounts, sequenceLength);
             }
 
-            var chars = sequence.Read.ToArray();
-            for (var c = 0; c < chars.Length; c++)
+            var read = sequence.Read;
+            for (var i = 0; i < read.Length; i++)
             {
-                if (chars[c] == 'N')
+                if (read[i] == 'N')
                 {
-                    nCounts[c]++;
+                    nCounts[i]++;
                 }
                 else
                 {
-                    notNCounts[c]++;
+                    notNCounts[i]++;
                 }
             }
         }

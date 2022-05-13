@@ -25,12 +25,12 @@ namespace Ovation.FasterQC.Net
                 Array.Resize(ref gcCounts, sequenceLength);
             }
 
-            var chars = sequence.Read.ToArray();
-            for (var c = 0; c < chars.Length; c++)
+            var read = sequence.Read;
+            for (var i = 0; i < read.Length; i++)
             {
-                if (chars[c] == 'G' || chars[c] == 'C')
+                if (read[i] == 'G' || read[i] == 'C')
                 {
-                    gcCounts[c]++;
+                    gcCounts[i]++;
                 }
             }
         }

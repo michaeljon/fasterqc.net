@@ -10,10 +10,8 @@
       "request": "launch",
       "preLaunchTask": "build",
       // If you have changed target frameworks, make sure to update the program path.
-      "program": "${workspaceFolder}/bin/Debug/net5.0/Ovation.FasterQC.Net.dll",
-      "args": [
-        "/Volumes/Untitled/zymo/2022-03-30-03/zr6401_5/zr6401_5.sorted.bam"
-      ],
+      "program": "${workspaceFolder}/bin/Debug/net6.0/Ovation.FasterQC.Net.dll",
+      "args": ["/Users/michaeljon/tmp/zymo/in3257_6_S5_combined.fastq.gz"],
       "cwd": "${workspaceFolder}",
       // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console
       "console": "internalConsole",

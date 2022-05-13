@@ -44,7 +44,7 @@ namespace Ovation.FasterQC.Net
         public void ProcessSequence(Sequence sequence)
         {
             var sequenceLength = sequence.Read.Length;
-            var chars = sequence.Read.ToArray();
+            var chars = sequence.Read;
 
             var index = (uint)(chars[0] << 24 |
                                chars[1] << 16 |
