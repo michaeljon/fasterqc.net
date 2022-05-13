@@ -9,7 +9,7 @@ namespace Ovation.FasterQC.Net
 
         private static readonly int DICTIONARY_SIZE = (int)Math.Pow(4, KMER_SIZE);
 
-        private static readonly IDictionary<uint, ulong> kmers = new Dictionary<uint, ulong>(DICTIONARY_SIZE);
+        private readonly IDictionary<uint, ulong> kmers = new Dictionary<uint, ulong>(DICTIONARY_SIZE);
 
         public string Name => "kmerContent";
 

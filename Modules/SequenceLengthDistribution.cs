@@ -8,7 +8,7 @@ namespace Ovation.FasterQC.Net
         private int minimumReadLength = int.MaxValue;
         private int maximumReadLength = int.MinValue;
 
-        private static readonly IDictionary<int, ulong> lengths = new Dictionary<int, ulong>();
+        private readonly IDictionary<int, ulong> lengths = new Dictionary<int, ulong>();
 
         public string Name => "sequenceLengthDistribution";
 
