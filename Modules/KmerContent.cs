@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 
 namespace Ovation.FasterQC.Net
 {
@@ -10,7 +9,7 @@ namespace Ovation.FasterQC.Net
 
         private readonly int DICTIONARY_SIZE = (int)Math.Pow(4, KMER_SIZE);
 
-        private readonly ulong[] kmers = new ulong[256];
+        private readonly ulong[] kmers = new ulong[DICTIONARY_SIZE];
 
         public string Name => "kmerContent";
 
@@ -21,14 +20,13 @@ namespace Ovation.FasterQC.Net
             get
             {
                 var result = new Dictionary<string, ulong>(DICTIONARY_SIZE);
+                var index = new char[4];
 
-                for (byte k = 0; k <= 255; k++)
+                for (int k = 0; k < DICTIONARY_SIZE; k++)
                 {
                     var count = kmers[k];
                     if (count == 0)
                         continue;
-
-                    var index = new char[4];
 
                     index[3] = ((k & 0b11000000) >> 6) switch
                     {
@@ -66,9 +64,10 @@ namespace Ovation.FasterQC.Net
                         _ => ' '
                     };
 
-                    Console.Error.WriteLine($"{k} => {new string(index)}");
+                    var kmer = new string(index);
+                    Console.Error.WriteLine($"{k} => {kmer} => {kmers[k]}");
 
-                    result.Add(new string(index), count);
+                    result.Add(kmer, count);
                 }
 
                 return result;
@@ -80,15 +79,14 @@ namespace Ovation.FasterQC.Net
             var sequenceLength = sequence.Read.Length;
             var read = sequence.Read;
 
+            if (sequenceLength < KMER_SIZE)
+            {
+                return;
+            }
+
             for (var s = 0; s < sequenceLength - KMER_SIZE; s++)
             {
                 byte index = 0;
-
-                // don't fall off the end
-                if (s + 4 > sequenceLength)
-                {
-                    continue;
-                }
 
                 // we're not going to count any kmers with an N, we could be smarter and set s to the
                 // last read with an N to shorten our traversal, but for now...
