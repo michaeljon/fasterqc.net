@@ -85,10 +85,28 @@ namespace Ovation.FasterQC.Net
             {
                 byte kmer = 0;
 
-                // we're not going to count any kmers with an N, we could be smarter and set s to the
-                // last read with an N to shorten our traversal, but for now...
-                if (read[s] == (byte)'N' || read[s + 1] == (byte)'N' || read[s + 2] == (byte)'N' || read[s + 3] == (byte)'N')
+                // loop unroll and shift right if we find an N
+                if (read[s + 3] == (byte)'N')
                 {
+                    s += 4;
+                    continue;
+                }
+
+                if (read[s + 2] == (byte)'N')
+                {
+                    s += 3;
+                    continue;
+                }
+
+                if (read[s + 1] == (byte)'N')
+                {
+                    s += 2;
+                    continue;
+                }
+
+                if (read[s] == (byte)'N')
+                {
+                    s += 1;
                     continue;
                 }
 
