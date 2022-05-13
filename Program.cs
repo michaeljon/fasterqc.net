@@ -28,13 +28,20 @@ namespace Ovation.FasterQC.Net
 
         static void Main(string[] args)
         {
-            using var bamReader = new BamReader(args[0]);
+            using var bamReader = new FastqReader(args[0]);
+
+            var sequencesProcessed = 0;
 
             while (bamReader.ReadSequence(out Sequence sequence))
             {
                 foreach (var module in modules)
                 {
                     module.ProcessSequence(sequence);
+                }
+
+                if (++sequencesProcessed % 10000000 == 0)
+                {
+                    Console.Error.WriteLine($"{sequencesProcessed} sequences completed");
                 }
             }
 
