@@ -1,6 +1,6 @@
 using System;
 
-namespace Ovation.FasterQC.Net
+namespace Ovation.FasterQC.Net.Utils
 {
     public static class SequencePrinter
     {
