@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using CommandLine;
 
-namespace fasterqc.net.Utils
+namespace Ovation.FasterQC.Net.Utils
 {
     public class CliOptions
     {
@@ -19,7 +19,7 @@ namespace fasterqc.net.Utils
         [Option('i', "input", Required = true, HelpText = "Input filename.")]
         public string InputFilename { get; set; }
 
-        [Option('o', "output", Required = false, HelpText = "Output filename.")]
+        [Option('o', "output", Required = false, HelpText = "Output filename.  Defaults to STDOUT.")]
         public string OutputFilename { get; set; }
 
         [Option('b', "bam", Required = false, HelpText = "Assume BAM format.")]
@@ -31,7 +31,7 @@ namespace fasterqc.net.Utils
         [Option('z', "zipped", Required = false, HelpText = "Assume input file is gzipped.")]
         public bool Zipped { get; set; }
 
-        [Option('m', "modules", Required = true, Min = 1, HelpText = "List of modules to run, or 'all'.")]
+        [Option('m', "modules", Required = true, Min = 1, HelpText = "Space-separated list of modules to run, or 'all'.")]
         public IEnumerable<string> ModuleNames { get; set; }
 
         public static CliOptions Settings

@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 using System.IO.Compression;
-using static fasterqc.net.Utils.CliOptions;
+using static Ovation.FasterQC.Net.Utils.CliOptions;
 
 namespace Ovation.FasterQC.Net
 {

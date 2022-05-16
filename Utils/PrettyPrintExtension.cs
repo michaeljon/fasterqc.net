@@ -1,4 +1,4 @@
-namespace fasterqc.net.Utils
+namespace Ovation.FasterQC.Net.Utils
 {
     public static class PrettyPrintExtension
     {

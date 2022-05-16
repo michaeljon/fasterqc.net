@@ -1,9 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
-using fasterqc.net.Utils;
-using Ovation.FasterQC.Net;
+using Ovation.FasterQC.Net.Utils;
 
-namespace fasterqc.net.Modules
+namespace Ovation.FasterQC.Net.Modules
 {
     public static class ModuleFactory
     {

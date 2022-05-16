@@ -1,9 +1,8 @@
 using System;
 using System.Diagnostics;
-using Ovation.FasterQC.Net;
 using ShellProgressBar;
 
-namespace fasterqc.net.Utils
+namespace Ovation.FasterQC.Net.Utils
 {
     public class TimedSequenceProgressBar : ProgressBar
     {

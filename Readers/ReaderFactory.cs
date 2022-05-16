@@ -1,8 +1,7 @@
 using System;
-using fasterqc.net.Utils;
-using Ovation.FasterQC.Net;
+using Ovation.FasterQC.Net.Utils;
 
-namespace fasterqc.net.Readers
+namespace Ovation.FasterQC.Net.Readers
 {
     public static class ReaderFactory
     {

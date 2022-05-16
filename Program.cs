@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
 using CommandLine;
-using fasterqc.net.Modules;
-using fasterqc.net.Readers;
-using fasterqc.net.Utils;
-using static fasterqc.net.Utils.CliOptions;
+using Ovation.FasterQC.Net.Modules;
+using Ovation.FasterQC.Net.Readers;
+using Ovation.FasterQC.Net.Utils;
+using static Ovation.FasterQC.Net.Utils.CliOptions;
 
 namespace Ovation.FasterQC.Net
 {
