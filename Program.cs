@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
 using CommandLine;
+using fasterqc.net.Modules;
 using fasterqc.net.Readers;
 using fasterqc.net.Utils;
 using static fasterqc.net.Utils.CliOptions;
@@ -16,19 +17,6 @@ namespace Ovation.FasterQC.Net
             WriteIndented = true,
             DictionaryKeyPolicy = JsonNamingPolicy.CamelCase,
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-        };
-
-        private static readonly List<IQcModule> modules = new()
-        {
-            // new BasicStatistics(),
-            // new KMerContent(),
-            // new NCountsAtPosition(),
-            // new PerPositionSequenceContent(),
-            // new PerSequenceGcContent(),
-            new QualityDistributionByBase(),
-            // new MeanQualityDistribution(),
-            // new SequenceLengthDistribution(),
-            // new PerPositionQuality()
         };
 
         private TimedSequenceProgressBar progressBar;
@@ -47,6 +35,9 @@ namespace Ovation.FasterQC.Net
         private void Run()
         {
             using var sequenceReader = ReaderFactory.Create(Settings);
+            var modules = ModuleFactory.Create(Settings);
+
+            Console.Error.WriteLine($"Running modules:\n  {string.Join("\n  ", Settings.ModuleNames)}");
 
             On(Settings.ShowProgress, () => progressBar = new TimedSequenceProgressBar(sequenceReader));
             On(Settings.Verbose, () => Console.Error.WriteLine($"Processing {Settings.InputFilename}..."));
@@ -68,7 +59,11 @@ namespace Ovation.FasterQC.Net
                 });
             }
 
-            var results = new Dictionary<string, object>();
+            var results = new Dictionary<string, object>()
+            {
+                ["_modules"] = Settings.ModuleNames,
+            };
+
             foreach (var module in modules)
             {
                 results[module.Name] = module.Data;

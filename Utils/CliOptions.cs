@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using CommandLine;
 
@@ -6,11 +7,11 @@ namespace fasterqc.net.Utils
 {
     public class CliOptions
     {
-        [Option("debug", Required = false, SetName = "Verbose", HelpText = "Show diagnostic output.")]
-        public bool Debug { get; set; }
-
         [Option('v', "verbose", Required = false, SetName = "Verbose", HelpText = "Set output to verbose messages.")]
         public bool Verbose { get; set; }
+
+        [Option("debug", Required = false, SetName = "Verbose", HelpText = "Show diagnostic output.  Can only use with --verbose.")]
+        public bool Debug { get; set; }
 
         [Option('p', "progress", Required = false, SetName = "Progress", HelpText = "Show progress bar.  Cannnot use with --verbose.")]
         public bool ShowProgress { get; set; }
@@ -30,7 +31,11 @@ namespace fasterqc.net.Utils
         [Option('z', "zipped", Required = false, HelpText = "Assume input file is gzipped.")]
         public bool Zipped { get; set; }
 
-        public static CliOptions Settings { get; set; }
+        [Option('m', "modules", Required = true, Min = 1, HelpText = "List of modules to run, or 'all'.")]
+        public IEnumerable<string> ModuleNames { get; set; }
+
+        public static CliOptions Settings
+        { get; set; }
 
         public const int UpdatePeriod = 100_000;
 
