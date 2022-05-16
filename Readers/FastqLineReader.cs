@@ -17,6 +17,13 @@ namespace Ovation.FasterQC.Net
 
         private bool disposedValue;
 
+        private int sequencesRead = 0;
+
+        public int SequencesRead => sequencesRead;
+
+        public double ApproximateCompletion =>
+            100.0 * inputStream.Position / inputStream.Length;
+
         public FastqLineReader(string fastq, bool gzipped = true)
         {
             var bufferSize = 128 * 1024;
@@ -59,6 +66,7 @@ namespace Ovation.FasterQC.Net
                 var quality = Encoding.ASCII.GetBytes(streamReader.ReadLine());
 
                 sequence = new Sequence(identifier, read, blank, quality);
+                sequencesRead++;
                 return true;
             }
             catch (EndOfStreamException)
@@ -67,11 +75,6 @@ namespace Ovation.FasterQC.Net
                 sequence = null;
                 return false;
             }
-        }
-
-        public int ApproximateCompletion()
-        {
-            return (int)((double)inputStream.Position / (double)inputStream.Length * 100.0);
         }
 
         protected virtual void Dispose(bool disposing)

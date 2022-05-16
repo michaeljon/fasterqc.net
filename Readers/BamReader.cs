@@ -20,6 +20,10 @@ namespace Ovation.FasterQC.Net
 
         private bool disposedValue;
 
+        private int sequencesRead = 0;
+
+        public int SequencesRead => sequencesRead;
+
         public BamReader(string bam)
         {
             var bufferSize = 128 * 1024;
@@ -45,6 +49,7 @@ namespace Ovation.FasterQC.Net
                 var bamAlignment = ReadSequence();
 
                 sequence = new Sequence(bamAlignment);
+                sequencesRead++;
                 return true;
             }
             catch (EndOfStreamException)
@@ -54,10 +59,8 @@ namespace Ovation.FasterQC.Net
             }
         }
 
-        public int ApproximateCompletion()
-        {
-            return (int)((double)inputStream.Position / (double)inputStream.Length * 100.0);
-        }
+        public double ApproximateCompletion =>
+            100.0 * inputStream.Position / inputStream.Length;
 
         private void ConsumeHeader()
         {
@@ -83,7 +86,7 @@ namespace Ovation.FasterQC.Net
                 var name = binaryReader.ReadBytes((int)l_name - 1); binaryReader.ReadByte();
                 var l_ref = binaryReader.ReadUInt32();
 
-#if DEBUG_OUTPUT            
+#if DEBUG_OUTPUT
                 Console.Error.WriteLine($"refSeq: {refSeq}");
                 Console.Error.WriteLine($"l_name: {l_name}");
                 Console.Error.WriteLine($"name: {new string(Encoding.ASCII.GetChars(name))}");

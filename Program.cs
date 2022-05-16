@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text.Json;
+using fasterqc.net.Utils;
 
 namespace Ovation.FasterQC.Net
 {
@@ -29,8 +30,7 @@ namespace Ovation.FasterQC.Net
         static void Main(string[] args)
         {
             using var sequenceReader = new FastqLineReader(args[0], true);
-
-            var sequencesProcessed = 0;
+            using var progressBar = new TimedSequenceProgressBar(sequenceReader);
 
             while (sequenceReader.ReadSequence(out Sequence sequence))
             {
@@ -39,19 +39,15 @@ namespace Ovation.FasterQC.Net
                     module.ProcessSequence(sequence);
                 }
 
-                if (++sequencesProcessed % 100000 == 0)
-                {
-                    Console.Error.WriteLine($"{sequencesProcessed} sequences completed ~{sequenceReader.ApproximateCompletion()}%");
-                }
+                progressBar.Update();
             }
-
-            Console.Error.WriteLine($"{sequencesProcessed} sequences processed");
 
             var results = new Dictionary<string, object>();
             foreach (var module in modules)
             {
                 results[module.Name] = module.Data;
             }
+
             Console.WriteLine(JsonSerializer.Serialize(results, options));
         }
     }
