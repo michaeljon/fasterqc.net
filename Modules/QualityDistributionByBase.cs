@@ -5,10 +5,12 @@ namespace Ovation.FasterQC.Net
 {
     public class QualityDistributionByBase : IQcModule
     {
-        private ulong[] aQuality = Array.Empty<ulong>();
-        private ulong[] cQuality = Array.Empty<ulong>();
-        private ulong[] tQuality = Array.Empty<ulong>();
-        private ulong[] gQuality = Array.Empty<ulong>();
+        private const byte ILLUMINA_BASE_ADJUSTMENT = 33;
+
+        private ulong[] aQuality = new ulong[128];
+        private ulong[] cQuality = new ulong[128];
+        private ulong[] tQuality = new ulong[128];
+        private ulong[] gQuality = new ulong[128];
 
 
         private byte lowestScore = byte.MaxValue;
@@ -25,6 +27,12 @@ namespace Ovation.FasterQC.Net
             {
                 return new
                 {
+                    lowestScore = lowestScore - ILLUMINA_BASE_ADJUSTMENT,
+                    highestScore = highestScore - ILLUMINA_BASE_ADJUSTMENT,
+
+                    lowestScoreUnadjusted = lowestScore,
+                    highestScoreUnadjusted = highestScore,
+
                     aDistribution = aQuality.Skip(lowestScore).Take(highestScore - lowestScore + 1),
                     cDistribution = cQuality.Skip(lowestScore).Take(highestScore - lowestScore + 1),
                     tDistribution = tQuality.Skip(lowestScore).Take(highestScore - lowestScore + 1),
@@ -54,8 +62,11 @@ namespace Ovation.FasterQC.Net
                 var qual = quals[i];
                 var read = chars[i];
 
-                lowestScore = Math.Min(lowestScore, quals[i]);
-                highestScore = Math.Max(highestScore, quals[i]);
+                if (read != (byte)'N')
+                {
+                    lowestScore = Math.Min(lowestScore, quals[i]);
+                    highestScore = Math.Max(highestScore, quals[i]);
+                }
 
                 switch (read)
                 {
@@ -69,10 +80,13 @@ namespace Ovation.FasterQC.Net
 
         public void Reset()
         {
-            aQuality = Array.Empty<ulong>();
-            cQuality = Array.Empty<ulong>();
-            tQuality = Array.Empty<ulong>();
-            gQuality = Array.Empty<ulong>();
+            for (var p = 0; p < aQuality.Length; p++)
+            {
+                aQuality[p] = 0;
+                cQuality[p] = 0;
+                tQuality[p] = 0;
+                gQuality[p] = 0;
+            }
 
             lowestScore = byte.MaxValue;
             highestScore = byte.MinValue;
