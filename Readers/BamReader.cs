@@ -1,10 +1,8 @@
-// #define DEBUG_OUTPUT
 using System;
 using System.IO;
 using System.IO.Compression;
-#if DEBUG_OUTPUT
 using System.Text;
-#endif
+using static fasterqc.net.Utils.CliOptions;
 
 namespace Ovation.FasterQC.Net
 {
@@ -69,13 +67,14 @@ namespace Ovation.FasterQC.Net
             var text = binaryReader.ReadBytes((int)l_text);
             var n_ref = binaryReader.ReadUInt32();
 
-#if DEBUG_OUTPUT
-            Console.Error.WriteLine($"magic: {(char)magic[0]}{(char)magic[1]}{(char)magic[2]}");
-            Console.Error.WriteLine($"l_text: {l_text}");
-            Console.Error.WriteLine($"text: ");
-            Console.Error.WriteLine(new string(Encoding.ASCII.GetChars(text)));
-            Console.Error.WriteLine($"n_ref: {n_ref}");
-#endif
+            On(Settings.Debug, () =>
+            {
+                Console.Error.WriteLine($"magic: {(char)magic[0]}{(char)magic[1]}{(char)magic[2]}");
+                Console.Error.WriteLine($"l_text: {l_text}");
+                Console.Error.WriteLine($"text: ");
+                Console.Error.WriteLine(new string(Encoding.ASCII.GetChars(text)));
+                Console.Error.WriteLine($"n_ref: {n_ref}");
+            });
 
             for (var refSeq = 0; refSeq < n_ref; refSeq++)
             {
@@ -86,12 +85,13 @@ namespace Ovation.FasterQC.Net
                 var name = binaryReader.ReadBytes((int)l_name - 1); binaryReader.ReadByte();
                 var l_ref = binaryReader.ReadUInt32();
 
-#if DEBUG_OUTPUT
-                Console.Error.WriteLine($"refSeq: {refSeq}");
-                Console.Error.WriteLine($"l_name: {l_name}");
-                Console.Error.WriteLine($"name: {new string(Encoding.ASCII.GetChars(name))}");
-                Console.Error.WriteLine($"l_ref: {l_ref}");
-#endif
+                On(Settings.Debug, () =>
+                {
+                    Console.Error.WriteLine($"refSeq: {refSeq}");
+                    Console.Error.WriteLine($"l_name: {l_name}");
+                    Console.Error.WriteLine($"name: {new string(Encoding.ASCII.GetChars(name))}");
+                    Console.Error.WriteLine($"l_ref: {l_ref}");
+                });
             }
         }
 

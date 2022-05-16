@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.IO.Compression;
 using System.Text;
+using static fasterqc.net.Utils.CliOptions;
 
 namespace Ovation.FasterQC.Net
 {
@@ -55,7 +56,7 @@ namespace Ovation.FasterQC.Net
             {
                 if (streamReader.EndOfStream == true)
                 {
-                    Console.Error.WriteLine("End of stream");
+                    On(Settings.Verbose, () => Console.Error.WriteLine("End of stream"));
                     sequence = null;
                     return false;
                 }
@@ -71,7 +72,7 @@ namespace Ovation.FasterQC.Net
             }
             catch (EndOfStreamException)
             {
-                Console.Error.WriteLine("End of stream");
+                On(Settings.Verbose, () => Console.Error.WriteLine("End of stream"));
                 sequence = null;
                 return false;
             }

@@ -24,12 +24,12 @@ namespace fasterqc.net.Utils
             elapsedTime.Start();
         }
 
-        public void Update()
+        public void Update(bool force = false)
         {
             var read = sequenceReader.SequencesRead;
             var percent = sequenceReader.ApproximateCompletion;
 
-            if (read % 100_000 == 0)
+            if (force || read % CliOptions.UpdatePeriod == 0)
             {
                 if (percent > 0)
                 {
