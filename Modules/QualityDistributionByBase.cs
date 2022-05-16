@@ -48,15 +48,6 @@ namespace Ovation.FasterQC.Net
             var quals = sequence.Quality;
             var chars = sequence.Read;
 
-            // see if we need to resize this
-            if (sequenceLength > aQuality.Length)
-            {
-                Array.Resize(ref aQuality, sequenceLength);
-                Array.Resize(ref cQuality, sequenceLength);
-                Array.Resize(ref tQuality, sequenceLength);
-                Array.Resize(ref gQuality, sequenceLength);
-            }
-
             for (var i = 0; i < sequenceLength; i++)
             {
                 var qual = quals[i];
