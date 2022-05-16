@@ -7,11 +7,10 @@ namespace Ovation.FasterQC.Net
     {
         private const byte ILLUMINA_BASE_ADJUSTMENT = 33;
 
-        private ulong[] aQuality = new ulong[128];
-        private ulong[] cQuality = new ulong[128];
-        private ulong[] tQuality = new ulong[128];
-        private ulong[] gQuality = new ulong[128];
-
+        private readonly ulong[] aQuality = new ulong[128];
+        private readonly ulong[] cQuality = new ulong[128];
+        private readonly ulong[] tQuality = new ulong[128];
+        private readonly ulong[] gQuality = new ulong[128];
 
         private byte lowestScore = byte.MaxValue;
 
