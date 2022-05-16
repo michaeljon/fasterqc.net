@@ -21,14 +21,14 @@ namespace Ovation.FasterQC.Net
         private static readonly List<IQcModule> modules = new()
         {
             new BasicStatistics(),
-            // new KMerContent(),
-            // new NCountsAtPosition(),
-            // new PerPositionSequenceContent(),
-            // new PerSequenceGcContent(),
-            // new QualityDistributionByBase(),
-            // new MeanQualityDistribution(),
-            // new SequenceLengthDistribution(),
-            // new PerPositionQuality()
+            new KMerContent(),
+            new NCountsAtPosition(),
+            new PerPositionSequenceContent(),
+            new PerSequenceGcContent(),
+            new QualityDistributionByBase(),
+            new MeanQualityDistribution(),
+            new SequenceLengthDistribution(),
+            new PerPositionQuality()
         };
 
         private TimedSequenceProgressBar progressBar;
