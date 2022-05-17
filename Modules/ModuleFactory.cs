@@ -21,7 +21,7 @@ namespace Ovation.FasterQC.Net.Modules
 
         public static IEnumerable<IQcModule> Create(CliOptions settings)
         {
-            if (settings.ModuleNames.First() == "all")
+            if (settings.ModuleNames.Any() == false || settings.ModuleNames.First() == "all")
             {
                 settings.ModuleNames = moduleMap.Keys;
                 return moduleMap.Values;

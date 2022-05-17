@@ -31,7 +31,7 @@ namespace Ovation.FasterQC.Net.Utils
         [Option('z', "zipped", Required = false, HelpText = "Assume input file is gzipped.")]
         public bool Zipped { get; set; }
 
-        [Option('m', "modules", Required = true, Min = 1, HelpText = "Space-separated list of modules to run, or 'all'.")]
+        [Option('m', "modules", Required = false, HelpText = "Space-separated list of modules to run, or 'all'.")]
         public IEnumerable<string> ModuleNames { get; set; }
 
         public static CliOptions Settings
