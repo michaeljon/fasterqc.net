@@ -106,9 +106,10 @@ namespace Ovation.FasterQC.Net
             var bamAlignment = new BamAlignment
             {
                 block_size = block_size,
+                refID = BitConverter.ToInt32(block, offset)
             };
 
-            bamAlignment.refID = BitConverter.ToInt32(block, offset); offset += 4;
+            offset += 4;
             bamAlignment.pos = BitConverter.ToInt32(block, offset) + 1; offset += 4;
             bamAlignment.l_read_name = block[offset]; offset += 1;
             bamAlignment.mapq = block[offset]; offset += 1;
