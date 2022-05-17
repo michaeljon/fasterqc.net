@@ -40,7 +40,7 @@ namespace Ovation.FasterQC.Net
             ConsumeHeader();
         }
 
-        public bool ReadSequence(out Sequence sequence)
+        public bool ReadSequence(out Sequence? sequence)
         {
             try
             {

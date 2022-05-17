@@ -34,6 +34,7 @@ namespace Ovation.FasterQC.Net
             Identifier = new ReadOnlyMemory<byte>(bamAlignment.read_name).ToArray();
             Read = new ReadOnlyMemory<byte>(bamAlignment.seq).ToArray();
             Quality = new ReadOnlyMemory<byte>(bamAlignment.qual).ToArray();
+            Blank = Array.Empty<byte>();
         }
 
         public override string ToString()

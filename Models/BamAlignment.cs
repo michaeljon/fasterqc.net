@@ -1,6 +1,8 @@
+using System.Diagnostics.CodeAnalysis;
+
 namespace Ovation.FasterQC.Net
 {
-#pragma warning disable IDE1006
+    [SuppressMessage("Code style", "IDE1006", Justification = "Names correspond to BAM structure field names")]
     public class BamAlignment
     {
         public uint block_size { get; set; }
@@ -27,13 +29,12 @@ namespace Ovation.FasterQC.Net
 
         public int tlen { get; set; }
 
-        public byte[] read_name { get; set; }
+        public byte[] read_name { get; set; } = null!;
 
-        public uint[] cigar { get; set; }
+        public uint[] cigar { get; set; } = null!;
 
-        public byte[] seq { get; set; }
+        public byte[] seq { get; set; } = null!;
 
-        public byte[] qual { get; set; }
+        public byte[] qual { get; set; } = null!;
     }
-#pragma warning restore IDE1006
 }

@@ -9,7 +9,7 @@ namespace Ovation.FasterQC.Net.Readers
         {
             return settings switch
             {
-                { Fastq: true } => new FastqLineReader(settings.InputFilename, true),
+                { Fastq: true } => new FastqLineReader(settings.InputFilename, settings.Zipped),
                 { Bam: true } => new BamReader(settings.InputFilename),
                 _ => throw new InvalidOperationException($"could not determine file type of {settings.InputFilename}")
             };

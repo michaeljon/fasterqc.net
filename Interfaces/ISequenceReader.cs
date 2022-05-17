@@ -6,7 +6,7 @@ namespace Ovation.FasterQC.Net
     {
         int SequencesRead { get; }
 
-        bool ReadSequence(out Sequence sequence);
+        bool ReadSequence(out Sequence? sequence);
 
         double ApproximateCompletion { get; }
     }
