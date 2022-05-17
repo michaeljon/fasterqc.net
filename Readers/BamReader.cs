@@ -1,10 +1,8 @@
-// #define DEBUG_OUTPUT
 using System;
 using System.IO;
 using System.IO.Compression;
-#if DEBUG_OUTPUT
 using System.Text;
-#endif
+using static Ovation.FasterQC.Net.Utils.CliOptions;
 
 namespace Ovation.FasterQC.Net
 {
@@ -19,6 +17,10 @@ namespace Ovation.FasterQC.Net
         private readonly BinaryReader binaryReader;
 
         private bool disposedValue;
+
+        private int sequencesRead = 0;
+
+        public int SequencesRead => sequencesRead;
 
         public BamReader(string bam)
         {
@@ -45,6 +47,7 @@ namespace Ovation.FasterQC.Net
                 var bamAlignment = ReadSequence();
 
                 sequence = new Sequence(bamAlignment);
+                sequencesRead++;
                 return true;
             }
             catch (EndOfStreamException)
@@ -54,10 +57,8 @@ namespace Ovation.FasterQC.Net
             }
         }
 
-        public int ApproximateCompletion()
-        {
-            return (int)((double)inputStream.Position / (double)inputStream.Length * 100.0);
-        }
+        public double ApproximateCompletion =>
+            100.0 * inputStream.Position / inputStream.Length;
 
         private void ConsumeHeader()
         {
@@ -66,13 +67,14 @@ namespace Ovation.FasterQC.Net
             var text = binaryReader.ReadBytes((int)l_text);
             var n_ref = binaryReader.ReadUInt32();
 
-#if DEBUG_OUTPUT
-            Console.Error.WriteLine($"magic: {(char)magic[0]}{(char)magic[1]}{(char)magic[2]}");
-            Console.Error.WriteLine($"l_text: {l_text}");
-            Console.Error.WriteLine($"text: ");
-            Console.Error.WriteLine(new string(Encoding.ASCII.GetChars(text)));
-            Console.Error.WriteLine($"n_ref: {n_ref}");
-#endif
+            On(Settings.Debug, () =>
+            {
+                Console.Error.WriteLine($"magic: {(char)magic[0]}{(char)magic[1]}{(char)magic[2]}");
+                Console.Error.WriteLine($"l_text: {l_text}");
+                Console.Error.WriteLine($"text: ");
+                Console.Error.WriteLine(new string(Encoding.ASCII.GetChars(text)));
+                Console.Error.WriteLine($"n_ref: {n_ref}");
+            });
 
             for (var refSeq = 0; refSeq < n_ref; refSeq++)
             {
@@ -83,12 +85,13 @@ namespace Ovation.FasterQC.Net
                 var name = binaryReader.ReadBytes((int)l_name - 1); binaryReader.ReadByte();
                 var l_ref = binaryReader.ReadUInt32();
 
-#if DEBUG_OUTPUT            
-                Console.Error.WriteLine($"refSeq: {refSeq}");
-                Console.Error.WriteLine($"l_name: {l_name}");
-                Console.Error.WriteLine($"name: {new string(Encoding.ASCII.GetChars(name))}");
-                Console.Error.WriteLine($"l_ref: {l_ref}");
-#endif
+                On(Settings.Debug, () =>
+                {
+                    Console.Error.WriteLine($"refSeq: {refSeq}");
+                    Console.Error.WriteLine($"l_name: {l_name}");
+                    Console.Error.WriteLine($"name: {new string(Encoding.ASCII.GetChars(name))}");
+                    Console.Error.WriteLine($"l_ref: {l_ref}");
+                });
             }
         }
 

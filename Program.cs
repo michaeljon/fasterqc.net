@@ -1,6 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text.Json;
+using CommandLine;
+using Ovation.FasterQC.Net.Modules;
+using Ovation.FasterQC.Net.Readers;
+using Ovation.FasterQC.Net.Utils;
+using static Ovation.FasterQC.Net.Utils.CliOptions;
 
 namespace Ovation.FasterQC.Net
 {
@@ -13,24 +19,28 @@ namespace Ovation.FasterQC.Net
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase
         };
 
-        private static readonly List<IQcModule> modules = new()
-        {
-            // new BasicStatistics(),
-            // new KMerContent(),
-            // new NCountsAtPosition(),
-            // new PerPositionSequenceContent(),
-            // new PerSequenceGcContent(),
-            new QualityDistributionByBase(),
-            // new MeanQualityDistribution(),
-            // new SequenceLengthDistribution(),
-            // new PerPositionQuality()
-        };
+        private TimedSequenceProgressBar progressBar;
 
         static void Main(string[] args)
         {
-            using var sequenceReader = new BamReader(args[0]);
+            Parser.Default.ParseArguments<CliOptions>(args)
+                .WithParsed(o =>
+                {
+                    o.Validate();
+                    Settings = o;
+                    new Program().Run();
+                });
+        }
 
-            var sequencesProcessed = 0;
+        private void Run()
+        {
+            using var sequenceReader = ReaderFactory.Create(Settings);
+            var modules = ModuleFactory.Create(Settings);
+
+            Console.Error.WriteLine($"Running modules:\n  {string.Join("\n  ", Settings.ModuleNames)}");
+
+            On(Settings.ShowProgress, () => progressBar = new TimedSequenceProgressBar(sequenceReader));
+            On(Settings.Verbose, () => Console.Error.WriteLine($"Processing {Settings.InputFilename}..."));
 
             while (sequenceReader.ReadSequence(out Sequence sequence))
             {
@@ -39,20 +49,39 @@ namespace Ovation.FasterQC.Net
                     module.ProcessSequence(sequence);
                 }
 
-                if (++sequencesProcessed % 100000 == 0)
+                On(Settings.ShowProgress, () => progressBar.Update());
+                On(Settings.Verbose, () =>
                 {
-                    Console.Error.WriteLine($"{sequencesProcessed} sequences completed ~{sequenceReader.ApproximateCompletion()}%");
-                }
+                    if (sequenceReader.SequencesRead % UpdatePeriod == 0)
+                    {
+                        Console.Error.WriteLine($"{sequenceReader.SequencesRead.WithSsiUnits()} sequences completed ({sequenceReader.ApproximateCompletion:0.0}%)");
+                    }
+                });
             }
 
-            Console.Error.WriteLine($"{sequencesProcessed} sequences processed");
+            var results = new Dictionary<string, object>()
+            {
+                ["_modules"] = Settings.ModuleNames,
+                ["_inputFilename"] = Settings.InputFilename,
+                ["_outputFilename"] = string.IsNullOrWhiteSpace(Settings.OutputFilename) ? "STDOUT" : Settings.OutputFilename,
+            };
 
-            var results = new Dictionary<string, object>();
             foreach (var module in modules)
             {
                 results[module.Name] = module.Data;
             }
-            Console.WriteLine(JsonSerializer.Serialize(results, options));
+
+            On(Settings.ShowProgress, () => progressBar.Update(force: true));
+            On(Settings.Verbose, () => Console.Error.WriteLine($"{sequenceReader.SequencesRead.WithSsiUnits()} sequences completed ({sequenceReader.ApproximateCompletion:0.0}%)"));
+
+            if (string.IsNullOrWhiteSpace(Settings.OutputFilename))
+            {
+                Console.WriteLine(JsonSerializer.Serialize(results, options));
+            }
+            else
+            {
+                File.WriteAllText(Settings.OutputFilename, JsonSerializer.Serialize(results, options));
+            }
         }
     }
 }

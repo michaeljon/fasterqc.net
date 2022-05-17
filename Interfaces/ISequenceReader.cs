@@ -4,8 +4,10 @@ namespace Ovation.FasterQC.Net
 {
     public interface ISequenceReader : IDisposable
     {
+        int SequencesRead { get; }
+
         bool ReadSequence(out Sequence sequence);
 
-        int ApproximateCompletion();
+        double ApproximateCompletion { get; }
     }
 }

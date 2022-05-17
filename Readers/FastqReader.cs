@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.IO.Compression;
+using static Ovation.FasterQC.Net.Utils.CliOptions;
 
 namespace Ovation.FasterQC.Net
 {
@@ -15,6 +16,13 @@ namespace Ovation.FasterQC.Net
         private readonly BinaryReader binaryReader;
 
         private bool disposedValue;
+
+        private int sequencesRead = 0;
+
+        public int SequencesRead => sequencesRead;
+
+        public double ApproximateCompletion =>
+            100.0 * inputStream.Position / inputStream.Length;
 
         public FastqReader(string fastq, bool gzipped = true)
         {
@@ -73,19 +81,15 @@ namespace Ovation.FasterQC.Net
                 }
 
                 sequence = new Sequence(bytes, endOfLines);
+                sequencesRead++;
                 return true;
             }
             catch (EndOfStreamException)
             {
-                Console.Error.WriteLine("End of stream");
+                On(Settings.Verbose, () => Console.Error.WriteLine("End of stream"));
                 sequence = null;
                 return false;
             }
-        }
-
-        public int ApproximateCompletion()
-        {
-            return (int)((double)inputStream.Position / (double)inputStream.Length * 100.0);
         }
 
         protected virtual void Dispose(bool disposing)
