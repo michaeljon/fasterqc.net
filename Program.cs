@@ -62,6 +62,8 @@ namespace Ovation.FasterQC.Net
             var results = new Dictionary<string, object>()
             {
                 ["_modules"] = Settings.ModuleNames,
+                ["_inputFilename"] = Settings.InputFilename,
+                ["_outputFilename"] = string.IsNullOrWhiteSpace(Settings.OutputFilename) ? "STDOUT" : Settings.OutputFilename,
             };
 
             foreach (var module in modules)
