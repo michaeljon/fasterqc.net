@@ -10,7 +10,7 @@ namespace Ovation.FasterQC.Net.Modules
     {
         private static Dictionary<string, IQcModule>? moduleMap;
 
-        private static Dictionary<string, IQcModule> ModuleMap
+        public static Dictionary<string, IQcModule> ModuleMap
         {
             get
             {

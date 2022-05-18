@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using System.Text.Json;
 using CommandLine;
+using CommandLine.Text;
 using Ovation.FasterQC.Net.Modules;
 using Ovation.FasterQC.Net.Readers;
 using Ovation.FasterQC.Net.Utils;
@@ -31,12 +33,36 @@ namespace Ovation.FasterQC.Net
                 }
             );
 
-            _ = parser.ParseArguments<CliOptions>(args)
-                .WithParsed(o =>
-                    {
-                        Settings = o;
-                        new Program().Run();
-                    });
+            var parserResult = parser.ParseArguments<CliOptions>(args);
+
+            parserResult.WithParsed(o =>
+                            {
+                                Settings = o;
+                                new Program().Run();
+                            })
+                        .WithNotParsed(errs => DisplayHelp(parserResult, errs));
+        }
+
+        static void DisplayHelp<T>(ParserResult<T> result, IEnumerable<Error> errs)
+        {
+            var moduleList = ModuleFactory.ModuleMap;
+            var sb = new StringBuilder("List of available modules:").AppendLine();
+
+            foreach (var module in moduleList)
+            {
+                sb.AppendLine($"\t{module.Key} -> {module.Value.Description}");
+            }
+
+            var helpText = HelpText.AutoBuild(result, h =>
+            {
+                h.AdditionalNewLineAfterOption = false;
+                h.MaximumDisplayWidth = 120;
+                h.AddPostOptionsText(sb.ToString());
+
+                return HelpText.DefaultParsingErrorsHandler(result, h);
+            }, e => e);
+
+            Console.Error.WriteLine(helpText);
         }
 
         private void Run()
