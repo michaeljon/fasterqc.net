@@ -43,10 +43,10 @@ namespace Ovation.FasterQC.Net
                         .WithNotParsed(errs => DisplayHelp(parserResult, errs));
         }
 
-        static void DisplayHelp<T>(ParserResult<T> result, IEnumerable<Error> errs)
+        static void DisplayHelp<T>(ParserResult<T> result, IEnumerable<Error> _)
         {
             var moduleList = ModuleFactory.ModuleMap;
-            var sb = new StringBuilder("List of available modules:").AppendLine();
+            var sb = new StringBuilder("List of available modules for --modules:").AppendLine();
 
             foreach (var module in moduleList)
             {
