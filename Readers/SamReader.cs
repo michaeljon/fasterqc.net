@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using System.IO;
 using System.IO.Compression;
 using System.Text;
@@ -6,7 +7,7 @@ using static Ovation.FasterQC.Net.Utils.CliOptions;
 
 namespace Ovation.FasterQC.Net
 {
-    public class FastqLineReader : ISequenceReader
+    public class SamReader : ISequenceReader
     {
         private readonly FileStream inputStream;
 
@@ -22,10 +23,7 @@ namespace Ovation.FasterQC.Net
 
         public int SequencesRead => sequencesRead;
 
-        public double ApproximateCompletion =>
-            100.0 * inputStream.Position / inputStream.Length;
-
-        public FastqLineReader(string fastq, bool gzipped = true)
+        public SamReader(string sam, bool gzipped = true)
         {
             var bufferSize = 128 * 1024;
 
@@ -37,16 +35,35 @@ namespace Ovation.FasterQC.Net
 
             if (gzipped == true)
             {
-                inputStream = File.Open(fastq, fileStreamOptions);
+                inputStream = File.Open(sam, fileStreamOptions);
                 gzipStream = new GZipStream(inputStream, CompressionMode.Decompress);
                 bufferedStream = new BufferedStream(gzipStream, bufferSize);
                 streamReader = new StreamReader(bufferedStream, Encoding.ASCII, false, bufferSize);
             }
             else
             {
-                inputStream = File.Open(fastq, fileStreamOptions);
+                inputStream = File.Open(sam, fileStreamOptions);
                 bufferedStream = new BufferedStream(inputStream, bufferSize);
                 streamReader = new StreamReader(bufferedStream, Encoding.ASCII, false, bufferSize);
+            }
+
+            ConsumeHeader();
+        }
+
+        private void ConsumeHeader()
+        {
+            try
+            {
+                while (streamReader.Peek() == '@')
+                {
+                    var header = streamReader.ReadLine();
+                    On(Settings.Debug, () => Console.Error.WriteLine(header));
+                }
+            }
+            catch (EndOfStreamException)
+            {
+                // swallow this, we've run out of file and a call
+                // into ReadSequence will handle the EOF case
             }
         }
 
@@ -56,27 +73,43 @@ namespace Ovation.FasterQC.Net
             {
                 if (streamReader.EndOfStream == true)
                 {
-                    On(Settings.Verbose, () => Console.Error.WriteLine("End of stream"));
-                    sequence = null;
-                    return false;
+                    goto endofstream;
                 }
 
-                var identifier = Encoding.ASCII.GetBytes(streamReader.ReadLine() ?? "");
-                var read = Encoding.ASCII.GetBytes(streamReader.ReadLine() ?? "");
-                var blank = Encoding.ASCII.GetBytes(streamReader.ReadLine() ?? "");
-                var quality = Encoding.ASCII.GetBytes(streamReader.ReadLine() ?? "");
+                var entry = streamReader.ReadLine();
+                if (entry == null)
+                {
+                    goto endofstream;
+                }
 
-                sequence = new Sequence(0, identifier, read, blank, quality);
+                // this is clearly a bad approach, we're going to be allocating a
+                // ton of small strings here, probably better to read the line,
+                // find the tabs ourselves, then pull the bytes out of the components
+                var parts = entry.Split('\t', StringSplitOptions.TrimEntries);
+
+                var identifier = Encoding.ASCII.GetBytes(parts[0]);
+                var flag = ushort.Parse(parts[1], CultureInfo.InvariantCulture);
+                var read = Encoding.ASCII.GetBytes(parts[9]);
+                var blank = Encoding.ASCII.GetBytes("");
+                var quality = Encoding.ASCII.GetBytes(parts[10]);
+
+                sequence = new Sequence(flag, identifier, read, blank, quality);
                 sequencesRead++;
                 return true;
             }
             catch (EndOfStreamException)
             {
-                On(Settings.Verbose, () => Console.Error.WriteLine("End of stream"));
-                sequence = null;
-                return false;
+                goto endofstream;
             }
+
+        endofstream:
+            On(Settings.Verbose, () => Console.Error.WriteLine("End of stream"));
+            sequence = null;
+            return false;
         }
+
+        public double ApproximateCompletion =>
+            100.0 * inputStream.Position / inputStream.Length;
 
         protected virtual void Dispose(bool disposing)
         {

@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using CommandLine;
 
 namespace Ovation.FasterQC.Net.Utils
@@ -10,7 +9,7 @@ namespace Ovation.FasterQC.Net.Utils
         [Option('v', "verbose", Required = false, SetName = "Verbose", HelpText = "Set output to verbose messages.")]
         public bool Verbose { get; set; }
 
-        [Option("debug", Required = false, SetName = "Verbose", HelpText = "Show diagnostic output.  Can only use with --verbose.")]
+        [Option('d', "debug", Required = false, SetName = "Verbose", HelpText = "Show diagnostic output.  Can only use with --verbose.")]
         public bool Debug { get; set; }
 
         [Option('p', "progress", Required = false, SetName = "Progress", HelpText = "Show progress bar.  Cannnot use with --verbose.")]
@@ -22,14 +21,8 @@ namespace Ovation.FasterQC.Net.Utils
         [Option('o', "output", Required = false, HelpText = "Output filename.  Defaults to STDOUT.")]
         public string OutputFilename { get; set; } = null!;
 
-        [Option('b', "bam", Required = false, HelpText = "Assume BAM format.")]
-        public bool Bam { get; set; }
-
-        [Option('f', "fastq", Required = false, HelpText = "Assume FASTQ format.")]
-        public bool Fastq { get; set; }
-
-        [Option('z', "zipped", Required = false, HelpText = "Assume input file is gzipped.")]
-        public bool Zipped { get; set; }
+        [Option('f', "format", Required = true, HelpText = "Type of input file.")]
+        public ReaderType Format { get; set; }
 
         [Option('m', "modules", Required = true, Min = 1, HelpText = "Space-separated list of modules to run, or 'all'.")]
         public IEnumerable<string> ModuleNames { get; set; } = Array.Empty<string>();
@@ -44,28 +37,6 @@ namespace Ovation.FasterQC.Net.Utils
             {
                 action();
             }
-        }
-
-        public bool Validate()
-        {
-            if (!(Bam || Fastq))
-            {
-                Fastq = InputFilename.EndsWith(".fastq", ignoreCase: true, culture: CultureInfo.InvariantCulture)
-                        || InputFilename.EndsWith(".fastq.gz", ignoreCase: true, culture: CultureInfo.InvariantCulture);
-
-                Bam = InputFilename.EndsWith(".bam", ignoreCase: true, culture: CultureInfo.InvariantCulture)
-                        || InputFilename.EndsWith(".bam.gz", ignoreCase: true, culture: CultureInfo.InvariantCulture);
-            }
-
-            if (Zipped == false && !string.IsNullOrWhiteSpace(InputFilename))
-            {
-                if (InputFilename.EndsWith(".gz", ignoreCase: true, culture: CultureInfo.InvariantCulture))
-                {
-                    Zipped = true;
-                }
-            }
-
-            return Fastq || Bam;
         }
     }
 }
