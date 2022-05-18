@@ -6,14 +6,19 @@ namespace Ovation.FasterQC.Net
     public class PerPositionSequenceContent : IQcModule
     {
         private ulong[] aCounts = Array.Empty<ulong>();
+
         private ulong[] cCounts = Array.Empty<ulong>();
+
         private ulong[] tCounts = Array.Empty<ulong>();
+
         private ulong[] gCounts = Array.Empty<ulong>();
         private ulong sequenceCount;
 
         public string Name => "baseCounts";
 
         public string Description => "Calculates ATCG counts at position along sequence";
+
+        public bool IsEnabledForAll => true;
 
         public object Data
         {

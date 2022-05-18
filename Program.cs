@@ -49,7 +49,7 @@ namespace Ovation.FasterQC.Net
             On(Settings.ShowProgress, () => progressBar = new TimedSequenceProgressBar(sequenceReader));
             On(Settings.Verbose, () => Console.Error.WriteLine($"Processing {Settings.InputFilename}..."));
 
-            while (sequenceReader.ReadSequence(out Sequence? sequence) && sequenceReader.SequencesRead < Settings.ReadLimit)
+            while (sequenceReader.SequencesRead < Settings.ReadLimit && sequenceReader.ReadSequence(out Sequence? sequence))
             {
                 ArgumentNullException.ThrowIfNull(sequence);
 
@@ -70,9 +70,13 @@ namespace Ovation.FasterQC.Net
 
             Dictionary<string, object>? results = new()
             {
-                ["_modules"] = Settings.ModuleNames,
-                ["_inputFilename"] = Settings.InputFilename,
-                ["_outputFilename"] = string.IsNullOrWhiteSpace(Settings.OutputFilename) ? "STDOUT" : Settings.OutputFilename,
+                ["_metadata"] = new
+                {
+                    _modules = Settings.ModuleNames,
+                    _inputFilename = Settings.InputFilename,
+                    _outputFilename = string.IsNullOrWhiteSpace(Settings.OutputFilename) ? "STDOUT" : Settings.OutputFilename,
+                    _sequences = sequenceReader.SequencesRead
+                }
             };
 
             foreach (IQcModule? module in modules)

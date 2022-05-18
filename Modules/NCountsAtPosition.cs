@@ -5,11 +5,14 @@ namespace Ovation.FasterQC.Net
     public class NCountsAtPosition : IQcModule
     {
         private int[] nCounts = Array.Empty<int>();
+
         private int[] notNCounts = Array.Empty<int>();
 
         public string Name => "nPercentages";
 
         public string Description => "Calculates N counts at position along sequence";
+
+        public bool IsEnabledForAll => true;
 
         public object Data
         {

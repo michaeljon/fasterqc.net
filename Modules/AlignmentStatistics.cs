@@ -1,9 +1,14 @@
 
+using System.Collections.Generic;
+using System.Linq;
+
 namespace Ovation.FasterQC.Net
 {
     public class AlignmentStatistics : IQcModule
     {
         private ulong sequenceCount;
+
+        private ulong baseCount;
 
         private ulong paired;
 
@@ -25,16 +30,39 @@ namespace Ovation.FasterQC.Net
 
         private ulong opticalDuplicate;
 
+        private ulong alignedBases;
+
+        private readonly Dictionary<int, ReadPair> readLengthHistogram = new();
+
         public string Name => "alignmentStatistics";
+
+        public bool IsEnabledForAll => true;
 
         public string Description => "Calculates alignment statistics for SAM/BAM files";
 
         public void ProcessSequence(Sequence sequence)
         {
             sequenceCount++;
+            baseCount += (ulong)sequence.Read.Length;
 
-            if ((sequence.ReadFlag & ReadFlag.Paired) != 0) paired++;
-            if ((sequence.ReadFlag & ReadFlag.Aligned) != 0) aligned++;
+            if (readLengthHistogram.ContainsKey(sequence.Read.Length) == false)
+            {
+                readLengthHistogram.Add(sequence.Read.Length, new ReadPair());
+            }
+
+            var readPair = readLengthHistogram[sequence.Read.Length];
+
+            if ((sequence.ReadFlag & ReadFlag.Paired) != 0)
+            {
+                paired++;
+                readPair.Paired++;
+            }
+            if ((sequence.ReadFlag & ReadFlag.Aligned) != 0)
+            {
+                aligned++;
+                alignedBases += (ulong)sequence.Read.Length;
+                readPair.AlignedAndPaired++;
+            }
             if ((sequence.ReadFlag & ReadFlag.AlignedAndPaired) == ReadFlag.AlignedAndPaired) alignedAndPaired++;
             if ((sequence.ReadFlag & ReadFlag.SegmentUnmapped) != 0) segmentUnmapped++;
             if ((sequence.ReadFlag & ReadFlag.NextSegmentUnmapped) != 0) nextSegmentUnmapped++;
@@ -62,7 +90,19 @@ namespace Ovation.FasterQC.Net
             nextSegmentReverseComplemented,
             nonPrimaryAlignment,
             failedQualityChecks,
-            opticalDuplicate
+            opticalDuplicate,
+            alignedBases,
+            averageReadLength = (double)baseCount / (double)sequenceCount,
+            histogram = readLengthHistogram
+                .Select((k, v) => new ulong[] { (ulong)k.Key, k.Value.Paired, k.Value.AlignedAndPaired })
+                .OrderBy(a => a[0])
         };
+
+        class ReadPair
+        {
+            public ulong AlignedAndPaired { get; set; }
+
+            public ulong Paired { get; set; }
+        }
     }
 }

@@ -22,6 +22,8 @@ namespace Ovation.FasterQC.Net
 
         public string Description => "Computes 4-mer counts across all sequences";
 
+        public bool IsEnabledForAll => true;
+
         public object Data
         {
             get

@@ -6,11 +6,14 @@ namespace Ovation.FasterQC.Net
     public class PerSequenceGcContent : IQcModule
     {
         private ulong[] gcCounts = Array.Empty<ulong>();
+
         private ulong sequenceCount;
 
         public string Name => "gcDistribution";
 
         public string Description => "Distribution of GC content percentages";
+
+        public bool IsEnabledForAll => true;
 
         public object Data => gcCounts.Select(a => Math.Round((double)a / (double)sequenceCount * 100.0, 3));
 
