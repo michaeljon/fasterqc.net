@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text.Json;
 using CommandLine;
 using Ovation.FasterQC.Net.Modules;
@@ -11,7 +10,7 @@ using static Ovation.FasterQC.Net.Utils.CliOptions;
 
 namespace Ovation.FasterQC.Net
 {
-    class Program
+    internal class Program : IDisposable
     {
         private static readonly JsonSerializerOptions options = new()
         {
@@ -22,9 +21,9 @@ namespace Ovation.FasterQC.Net
 
         private TimedSequenceProgressBar? progressBar;
 
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
-            var parser = new Parser(config =>
+            Parser? parser = new(config =>
                 {
                     config.AutoHelp = true;
                     config.AutoVersion = true;
@@ -32,7 +31,7 @@ namespace Ovation.FasterQC.Net
                 }
             );
 
-            parser.ParseArguments<CliOptions>(args)
+            _ = parser.ParseArguments<CliOptions>(args)
                 .WithParsed(o =>
                     {
                         Settings = o;
@@ -42,8 +41,8 @@ namespace Ovation.FasterQC.Net
 
         private void Run()
         {
-            using var sequenceReader = ReaderFactory.Create(Settings);
-            var modules = ModuleFactory.Create(Settings);
+            using ISequenceReader? sequenceReader = ReaderFactory.Create(Settings);
+            IEnumerable<IQcModule>? modules = ModuleFactory.Create(Settings);
 
             Console.Error.WriteLine($"Running modules:\n  {string.Join("\n  ", Settings.ModuleNames)}");
 
@@ -54,7 +53,7 @@ namespace Ovation.FasterQC.Net
             {
                 ArgumentNullException.ThrowIfNull(sequence);
 
-                foreach (var module in modules)
+                foreach (IQcModule? module in modules)
                 {
                     module.ProcessSequence(sequence);
                 }
@@ -64,35 +63,25 @@ namespace Ovation.FasterQC.Net
                 {
                     if (sequenceReader.SequencesRead % UpdatePeriod == 0)
                     {
-                        var approximateCompletion = sequenceReader.ApproximateCompletion;
-
-                        // if we're limiting the number of reads then the reader's
-                        // approximation will be incorrect (it's based on file positions),
-                        // so we'll do the math ourselves
-                        if (Settings.ReadLimit < ulong.MaxValue)
-                        {
-                            approximateCompletion = 100.0 * (double)sequenceReader.SequencesRead / (double)Settings.ReadLimit;
-                        }
-
-                        Console.Error.WriteLine($"{sequenceReader.SequencesRead.WithSsiUnits()} sequences completed ({approximateCompletion:0.0}%)");
+                        WritePercentComplete(sequenceReader.ApproximateCompletion, sequenceReader.SequencesRead);
                     }
                 });
             }
 
-            var results = new Dictionary<string, object>()
+            Dictionary<string, object>? results = new()
             {
                 ["_modules"] = Settings.ModuleNames,
                 ["_inputFilename"] = Settings.InputFilename,
                 ["_outputFilename"] = string.IsNullOrWhiteSpace(Settings.OutputFilename) ? "STDOUT" : Settings.OutputFilename,
             };
 
-            foreach (var module in modules)
+            foreach (IQcModule? module in modules)
             {
                 results[module.Name] = module.Data;
             }
 
             On(Settings.ShowProgress, () => progressBar?.Update(force: true));
-            On(Settings.Verbose, () => Console.Error.WriteLine($"{sequenceReader.SequencesRead.WithSsiUnits()} sequences completed ({sequenceReader.ApproximateCompletion:0.0}%)"));
+            On(Settings.Verbose, () => WritePercentComplete(sequenceReader.ApproximateCompletion, sequenceReader.SequencesRead));
 
             if (string.IsNullOrWhiteSpace(Settings.OutputFilename))
             {
@@ -102,6 +91,26 @@ namespace Ovation.FasterQC.Net
             {
                 File.WriteAllText(Settings.OutputFilename, JsonSerializer.Serialize(results, options));
             }
+        }
+
+        private static void WritePercentComplete(double reportedCompletion, ulong sequencesRead)
+        {
+            double approximateCompletion = reportedCompletion;
+
+            // if we're limiting the number of reads then the reader's
+            // approximation will be incorrect (it's based on file positions),
+            // so we'll do the math ourselves
+            if (Settings.ReadLimit < ulong.MaxValue)
+            {
+                approximateCompletion = 100.0 * sequencesRead / Settings.ReadLimit;
+            }
+
+            Console.Error.WriteLine($"{sequencesRead.WithSsiUnits()} sequences completed ({approximateCompletion:0.0}%)");
+        }
+
+        public void Dispose()
+        {
+            throw new NotImplementedException();
         }
     }
 }
