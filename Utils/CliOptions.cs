@@ -24,8 +24,8 @@ namespace Ovation.FasterQC.Net.Utils
         [Option('f', "format", Required = true, HelpText = "Type of input file.")]
         public ReaderType Format { get; set; }
 
-        [Option('m', "modules", Required = true, Min = 1, HelpText = "Space-separated list of modules to run, or 'all'.")]
-        public IEnumerable<string> ModuleNames { get; set; } = Array.Empty<string>();
+        [Option('m', "modules", Required = false, HelpText = "Space-separated list of modules to run, or 'all'.")]
+        public IEnumerable<string> ModuleNames { get; set; }
 
         public static CliOptions Settings { get; set; } = null!;
 
