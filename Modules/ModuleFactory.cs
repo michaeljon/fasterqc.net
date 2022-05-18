@@ -8,6 +8,7 @@ namespace Ovation.FasterQC.Net.Modules
     {
         private static readonly Dictionary<string, IQcModule> moduleMap = new()
         {
+            ["AlignmentStatistics"] = new AlignmentStatistics(),
             ["BasicStatistics"] = new BasicStatistics(),
             ["KMerContent"] = new KMerContent(),
             ["NCountsAtPosition"] = new NCountsAtPosition(),
