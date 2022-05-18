@@ -17,9 +17,9 @@ namespace Ovation.FasterQC.Net
 
         private bool disposedValue;
 
-        private int sequencesRead = 0;
+        private ulong sequencesRead = 0;
 
-        public int SequencesRead => sequencesRead;
+        public ulong SequencesRead => sequencesRead;
 
         public double ApproximateCompletion =>
             100.0 * inputStream.Position / inputStream.Length;

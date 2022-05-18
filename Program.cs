@@ -50,7 +50,7 @@ namespace Ovation.FasterQC.Net
             On(Settings.ShowProgress, () => progressBar = new TimedSequenceProgressBar(sequenceReader));
             On(Settings.Verbose, () => Console.Error.WriteLine($"Processing {Settings.InputFilename}..."));
 
-            while (sequenceReader.ReadSequence(out Sequence? sequence))
+            while (sequenceReader.ReadSequence(out Sequence? sequence) && sequenceReader.SequencesRead < Settings.ReadLimit)
             {
                 ArgumentNullException.ThrowIfNull(sequence);
 

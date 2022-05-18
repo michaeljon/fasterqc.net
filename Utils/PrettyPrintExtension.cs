@@ -2,7 +2,7 @@ namespace Ovation.FasterQC.Net.Utils
 {
     public static class PrettyPrintExtension
     {
-        public static string WithSsiUnits(this int n)
+        public static string WithSsiUnits(this ulong n)
         {
             return n switch
             {

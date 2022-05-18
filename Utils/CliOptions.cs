@@ -25,7 +25,10 @@ namespace Ovation.FasterQC.Net.Utils
         public ReaderType Format { get; set; }
 
         [Option('m', "modules", Required = false, HelpText = "Space-separated list of modules to run, or 'all'.")]
-        public IEnumerable<string> ModuleNames { get; set; }
+        public IEnumerable<string> ModuleNames { get; set; } = Array.Empty<string>();
+
+        [Option('l', "read-limit", Required = false, HelpText = "Limit the number of reads processed")]
+        public ulong ReadLimit { get; set; } = ulong.MaxValue;
 
         public static CliOptions Settings { get; set; } = null!;
 

@@ -15,6 +15,8 @@ namespace Ovation.FasterQC.Net
         /// </summary>
         Aligned = 2,
 
+        AlignedAndPaired = Aligned | Paired,
+
         /// <summary>
         /// segment unmapped (read1 unmapped)
         /// </summary>

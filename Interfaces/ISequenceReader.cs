@@ -4,7 +4,7 @@ namespace Ovation.FasterQC.Net
 {
     public interface ISequenceReader : IDisposable
     {
-        int SequencesRead { get; }
+        ulong SequencesRead { get; }
 
         bool ReadSequence(out Sequence? sequence);
 

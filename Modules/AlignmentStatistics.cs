@@ -9,13 +9,15 @@ namespace Ovation.FasterQC.Net
 
         private ulong aligned;
 
+        private ulong alignedAndPaired;
+
         private ulong segmentUnmapped;
 
         private ulong nextSegmentUnmapped;
 
         private ulong reverseComplemented;
 
-        private ulong nextSegmenteverseComplemented;
+        private ulong nextSegmentReverseComplemented;
 
         private ulong nonPrimaryAlignment;
 
@@ -33,10 +35,11 @@ namespace Ovation.FasterQC.Net
 
             if ((sequence.ReadFlag & ReadFlag.Paired) != 0) paired++;
             if ((sequence.ReadFlag & ReadFlag.Aligned) != 0) aligned++;
+            if ((sequence.ReadFlag & ReadFlag.AlignedAndPaired) == ReadFlag.AlignedAndPaired) alignedAndPaired++;
             if ((sequence.ReadFlag & ReadFlag.SegmentUnmapped) != 0) segmentUnmapped++;
             if ((sequence.ReadFlag & ReadFlag.NextSegmentUnmapped) != 0) nextSegmentUnmapped++;
             if ((sequence.ReadFlag & ReadFlag.ReverseComplemented) != 0) reverseComplemented++;
-            if ((sequence.ReadFlag & ReadFlag.NextSegmentReverseComplemented) != 0) nextSegmenteverseComplemented++;
+            if ((sequence.ReadFlag & ReadFlag.NextSegmentReverseComplemented) != 0) nextSegmentReverseComplemented++;
             if ((sequence.ReadFlag & ReadFlag.NotPrimaryAlignment) != 0) nonPrimaryAlignment++;
             if ((sequence.ReadFlag & ReadFlag.FailedQualityChecks) != 0) failedQualityChecks++;
             if ((sequence.ReadFlag & ReadFlag.OpticalDuplicate) != 0) opticalDuplicate++;
@@ -52,10 +55,11 @@ namespace Ovation.FasterQC.Net
             sequenceCount,
             paired,
             aligned,
+            alignedAndPaired,
             segmentUnmapped,
             nextSegmentUnmapped,
             reverseComplemented,
-            nextSegmenteverseComplemented,
+            nextSegmentReverseComplemented,
             nonPrimaryAlignment,
             failedQualityChecks,
             opticalDuplicate
