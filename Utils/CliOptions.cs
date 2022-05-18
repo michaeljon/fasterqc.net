@@ -17,10 +17,10 @@ namespace Ovation.FasterQC.Net.Utils
         public bool ShowProgress { get; set; }
 
         [Option('i', "input", Required = true, HelpText = "Input filename.")]
-        public string InputFilename { get; set; }
+        public string InputFilename { get; set; } = null!;
 
         [Option('o', "output", Required = false, HelpText = "Output filename.  Defaults to STDOUT.")]
-        public string OutputFilename { get; set; }
+        public string OutputFilename { get; set; } = null!;
 
         [Option('b', "bam", Required = false, HelpText = "Assume BAM format.")]
         public bool Bam { get; set; }
@@ -32,10 +32,9 @@ namespace Ovation.FasterQC.Net.Utils
         public bool Zipped { get; set; }
 
         [Option('m', "modules", Required = true, Min = 1, HelpText = "Space-separated list of modules to run, or 'all'.")]
-        public IEnumerable<string> ModuleNames { get; set; }
+        public IEnumerable<string> ModuleNames { get; set; } = Array.Empty<string>();
 
-        public static CliOptions Settings
-        { get; set; }
+        public static CliOptions Settings { get; set; } = null!;
 
         public const int UpdatePeriod = 100_000;
 

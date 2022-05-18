@@ -9,7 +9,7 @@ namespace Ovation.FasterQC.Net
     {
         private readonly FileStream inputStream;
 
-        private readonly GZipStream gzipStream;
+        private readonly GZipStream? gzipStream;
 
         private readonly BufferedStream bufferedStream;
 
@@ -49,7 +49,7 @@ namespace Ovation.FasterQC.Net
             }
         }
 
-        public bool ReadSequence(out Sequence sequence)
+        public bool ReadSequence(out Sequence? sequence)
         {
             // this is clearly dangerous, instead read a large chunk of the file
             // and then walk through it returning only the consumed portion while

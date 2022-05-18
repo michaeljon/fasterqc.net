@@ -19,7 +19,7 @@ namespace Ovation.FasterQC.Net
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase
         };
 
-        private TimedSequenceProgressBar progressBar;
+        private TimedSequenceProgressBar? progressBar;
 
         static void Main(string[] args)
         {
@@ -42,14 +42,16 @@ namespace Ovation.FasterQC.Net
             On(Settings.ShowProgress, () => progressBar = new TimedSequenceProgressBar(sequenceReader));
             On(Settings.Verbose, () => Console.Error.WriteLine($"Processing {Settings.InputFilename}..."));
 
-            while (sequenceReader.ReadSequence(out Sequence sequence))
+            while (sequenceReader.ReadSequence(out Sequence? sequence))
             {
+                ArgumentNullException.ThrowIfNull(sequence);
+
                 foreach (var module in modules)
                 {
                     module.ProcessSequence(sequence);
                 }
 
-                On(Settings.ShowProgress, () => progressBar.Update());
+                On(Settings.ShowProgress, () => progressBar?.Update());
                 On(Settings.Verbose, () =>
                 {
                     if (sequenceReader.SequencesRead % UpdatePeriod == 0)
@@ -71,7 +73,7 @@ namespace Ovation.FasterQC.Net
                 results[module.Name] = module.Data;
             }
 
-            On(Settings.ShowProgress, () => progressBar.Update(force: true));
+            On(Settings.ShowProgress, () => progressBar?.Update(force: true));
             On(Settings.Verbose, () => Console.Error.WriteLine($"{sequenceReader.SequencesRead.WithSsiUnits()} sequences completed ({sequenceReader.ApproximateCompletion:0.0}%)"));
 
             if (string.IsNullOrWhiteSpace(Settings.OutputFilename))

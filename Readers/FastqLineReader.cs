@@ -10,7 +10,7 @@ namespace Ovation.FasterQC.Net
     {
         private readonly FileStream inputStream;
 
-        private readonly GZipStream gzipStream;
+        private readonly GZipStream? gzipStream;
 
         private readonly BufferedStream bufferedStream;
 
@@ -50,7 +50,7 @@ namespace Ovation.FasterQC.Net
             }
         }
 
-        public bool ReadSequence(out Sequence sequence)
+        public bool ReadSequence(out Sequence? sequence)
         {
             try
             {
@@ -61,10 +61,10 @@ namespace Ovation.FasterQC.Net
                     return false;
                 }
 
-                var identifier = Encoding.ASCII.GetBytes(streamReader.ReadLine());
-                var read = Encoding.ASCII.GetBytes(streamReader.ReadLine());
-                var blank = Encoding.ASCII.GetBytes(streamReader.ReadLine());
-                var quality = Encoding.ASCII.GetBytes(streamReader.ReadLine());
+                var identifier = Encoding.ASCII.GetBytes(streamReader.ReadLine() ?? "");
+                var read = Encoding.ASCII.GetBytes(streamReader.ReadLine() ?? "");
+                var blank = Encoding.ASCII.GetBytes(streamReader.ReadLine() ?? "");
+                var quality = Encoding.ASCII.GetBytes(streamReader.ReadLine() ?? "");
 
                 sequence = new Sequence(identifier, read, blank, quality);
                 sequencesRead++;
