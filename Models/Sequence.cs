@@ -5,6 +5,8 @@ namespace Ovation.FasterQC.Net
 {
     public class Sequence
     {
+        public ReadFlag ReadFlag { get; }
+
         public byte[] Identifier { get; }
 
         public byte[] Read { get; }
@@ -21,8 +23,9 @@ namespace Ovation.FasterQC.Net
             Quality = new ReadOnlyMemory<byte>(lines, endOfLines[2], endOfLines[3] - endOfLines[2]).ToArray();
         }
 
-        public Sequence(byte[] identifer, byte[] read, byte[] blank, byte[] quality)
+        public Sequence(ushort readFlag, byte[] identifer, byte[] read, byte[] blank, byte[] quality)
         {
+            ReadFlag = (ReadFlag)readFlag;
             Identifier = new ReadOnlyMemory<byte>(identifer).ToArray();
             Read = new ReadOnlyMemory<byte>(read).ToArray();
             Blank = new ReadOnlyMemory<byte>(blank).ToArray();
@@ -31,15 +34,18 @@ namespace Ovation.FasterQC.Net
 
         public Sequence(BamAlignment bamAlignment)
         {
+            ReadFlag = (ReadFlag)bamAlignment.flag;
             Identifier = new ReadOnlyMemory<byte>(bamAlignment.read_name).ToArray();
             Read = new ReadOnlyMemory<byte>(bamAlignment.seq).ToArray();
             Quality = new ReadOnlyMemory<byte>(bamAlignment.qual).ToArray();
+            Blank = Array.Empty<byte>();
         }
 
         public override string ToString()
         {
             var sb = new StringBuilder("sequence: \n");
 
+            sb.AppendLine(ReadFlag.ToString());
             sb.AppendLine(new string(Encoding.ASCII.GetChars(Identifier)));
             sb.AppendLine(new string(Encoding.ASCII.GetChars(Read)));
             sb.AppendLine(new string(Encoding.ASCII.GetChars(Blank)));
