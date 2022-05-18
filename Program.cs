@@ -45,22 +45,23 @@ namespace Ovation.FasterQC.Net
 
         static void DisplayHelp<T>(ParserResult<T> result, IEnumerable<Error> _)
         {
-            var moduleList = ModuleFactory.ModuleMap;
             var sb = new StringBuilder("List of available modules for --modules:").AppendLine();
-
-            foreach (var module in moduleList)
+            foreach (var module in ModuleFactory.ModuleMap)
             {
                 sb.AppendLine($"\t{module.Key} -> {module.Value.Description}");
             }
 
-            var helpText = HelpText.AutoBuild(result, h =>
-            {
-                h.AdditionalNewLineAfterOption = false;
-                h.MaximumDisplayWidth = 120;
-                h.AddPostOptionsText(sb.ToString());
+            var helpText = HelpText.AutoBuild(result,
+                    h =>
+                    {
+                        h.AdditionalNewLineAfterOption = false;
+                        h.MaximumDisplayWidth = 120;
+                        h.AddPostOptionsText(sb.ToString());
 
-                return HelpText.DefaultParsingErrorsHandler(result, h);
-            }, e => e);
+                        return HelpText.DefaultParsingErrorsHandler(result, h);
+                    },
+                    e => e
+                );
 
             Console.Error.WriteLine(helpText);
         }
