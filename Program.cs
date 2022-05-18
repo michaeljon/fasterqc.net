@@ -64,7 +64,17 @@ namespace Ovation.FasterQC.Net
                 {
                     if (sequenceReader.SequencesRead % UpdatePeriod == 0)
                     {
-                        Console.Error.WriteLine($"{sequenceReader.SequencesRead.WithSsiUnits()} sequences completed ({sequenceReader.ApproximateCompletion:0.0}%)");
+                        var approximateCompletion = sequenceReader.ApproximateCompletion;
+
+                        // if we're limiting the number of reads then the reader's
+                        // approximation will be incorrect (it's based on file positions),
+                        // so we'll do the math ourselves
+                        if (Settings.ReadLimit < ulong.MaxValue)
+                        {
+                            approximateCompletion = 100.0 * (double)sequenceReader.SequencesRead / (double)Settings.ReadLimit;
+                        }
+
+                        Console.Error.WriteLine($"{sequenceReader.SequencesRead.WithSsiUnits()} sequences completed ({approximateCompletion:0.0}%)");
                     }
                 });
             }
