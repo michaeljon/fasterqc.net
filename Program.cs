@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.Json;
 using CommandLine;
 using Ovation.FasterQC.Net.Modules;
@@ -23,13 +24,20 @@ namespace Ovation.FasterQC.Net
 
         static void Main(string[] args)
         {
-            Parser.Default.ParseArguments<CliOptions>(args)
-                .WithParsed(o =>
+            var parser = new Parser(config =>
                 {
-                    o.Validate();
-                    Settings = o;
-                    new Program().Run();
-                });
+                    config.AutoHelp = true;
+                    config.AutoVersion = true;
+                    config.CaseInsensitiveEnumValues = true;
+                }
+            );
+
+            parser.ParseArguments<CliOptions>(args)
+                .WithParsed(o =>
+                    {
+                        Settings = o;
+                        new Program().Run();
+                    });
         }
 
         private void Run()
