@@ -47,6 +47,8 @@ namespace Ovation.FasterQC.Net
         /// </summary>
         LastSegment = 128,
 
+        EmbeddedSegment = FirstSegment | LastSegment,
+
         /// <summary>
         /// not primary alignment
         /// </summary>
@@ -65,6 +67,8 @@ namespace Ovation.FasterQC.Net
         /// <summary>
         /// supplementary alignment (e.g. aligner specific, could be a portion of a split read or a tied region)
         /// </summary>
-        SupplementaryAlignment = 2048
+        SupplementaryAlignment = 2048,
+
+        SecondaryAlignment = NotPrimaryAlignment | SupplementaryAlignment
     }
 }
