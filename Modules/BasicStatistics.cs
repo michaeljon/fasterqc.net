@@ -4,6 +4,8 @@ namespace Ovation.FasterQC.Net
 {
     public class BasicStatistics : IQcModule
     {
+        private const byte ILLUMINA_BASE_ADJUSTMENT = 33;
+
         private ulong sequenceCount;
 
         private int minimumReadLength = int.MaxValue;
@@ -87,7 +89,7 @@ namespace Ovation.FasterQC.Net
             nCount,
             xCount,
 
-            minimumQuality,
+            minimumQuality = Math.Min(minimumQuality - ILLUMINA_BASE_ADJUSTMENT, 0),
 
             gcContent = Math.Round((double)(cCount + gCount) / (double)totalBases * 100.0, 3),
 

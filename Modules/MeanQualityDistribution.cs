@@ -12,9 +12,9 @@ namespace Ovation.FasterQC.Net
         // position and fix it when someone asks
         private readonly ulong[] qualityScores = new ulong[128];
 
-        private byte lowestScore = byte.MaxValue;
+        private uint lowestMean = uint.MaxValue;
 
-        private byte highestScore = byte.MinValue;
+        private uint highestMean = uint.MinValue;
 
         public string Name => "meanQualityDistribution";
 
@@ -28,9 +28,9 @@ namespace Ovation.FasterQC.Net
             {
                 return new
                 {
-                    lowestScore = lowestScore - ILLUMINA_BASE_ADJUSTMENT,
-                    highestScore = highestScore - ILLUMINA_BASE_ADJUSTMENT,
-                    distribution = qualityScores.Skip(lowestScore).Take(highestScore - lowestScore + 1)
+                    lowestMean = lowestMean - ILLUMINA_BASE_ADJUSTMENT,
+                    highestMean = highestMean - ILLUMINA_BASE_ADJUSTMENT,
+                    distribution = qualityScores.Skip((int)lowestMean).Take((int)(highestMean - lowestMean + 1))
                 };
             }
         }
@@ -43,16 +43,17 @@ namespace Ovation.FasterQC.Net
             var count = 0;
 
             var qual = sequence.Quality;
-            for (var q = 0; q < sequenceLength; q++)
+            for (var i = 0; i < sequenceLength; i++)
             {
-                lowestScore = Math.Min(lowestScore, qual[q]);
-                highestScore = Math.Max(highestScore, qual[q]);
-
-                sum += qual[q];
+                sum += qual[i];
                 count++;
             }
 
-            var mean = sum / count;
+            var mean = (uint)(sum / count);
+
+            lowestMean = Math.Min(lowestMean, mean);
+            highestMean = Math.Max(highestMean, mean);
+
             qualityScores[mean]++;
         }
 
@@ -63,8 +64,8 @@ namespace Ovation.FasterQC.Net
                 qualityScores[p] = 0;
             }
 
-            lowestScore = byte.MaxValue;
-            highestScore = byte.MinValue;
+            lowestMean = uint.MaxValue;
+            highestMean = uint.MinValue;
         }
     }
 }
