@@ -7,6 +7,8 @@ namespace Ovation.FasterQC.Net
 
         string Description { get; }
 
+        bool IsEnabledForAll { get; }
+
         void ProcessSequence(Sequence sequence);
 
         void Reset();

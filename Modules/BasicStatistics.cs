@@ -24,6 +24,8 @@ namespace Ovation.FasterQC.Net
 
         public string Description => "Calculates basic quality statistics";
 
+        public bool IsEnabledForAll => true;
+
         public void ProcessSequence(Sequence sequence)
         {
             var sequenceLength = sequence.Read.Length;

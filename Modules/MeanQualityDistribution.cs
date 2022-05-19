@@ -20,6 +20,8 @@ namespace Ovation.FasterQC.Net
 
         public string Description => "Calculates the quality distribution across all sequences";
 
+        public bool IsEnabledForAll => true;
+
         public object Data
         {
             get
