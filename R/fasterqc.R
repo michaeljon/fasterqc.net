@@ -31,7 +31,7 @@ multiplot <- function(..., plotlist = NULL, file, cols = 1, layout = NULL) {
     # ncol: Number of columns of plots
     # nrow: Number of rows needed, calculated from # of cols
     layout <- matrix(seq(1, cols * ceiling(num_plots / cols)),
-      ncol = cols, nrow = ceiling(num_plots / cols)
+                     ncol = cols, nrow = ceiling(num_plots / cols)
     )
   }
 
@@ -56,9 +56,8 @@ multiplot <- function(..., plotlist = NULL, file, cols = 1, layout = NULL) {
 }
 
 setwd("/Users/michaeljon/src/ovation/fasterqc.net/tmp")
-sample <- "in3257_2_S1_sorted"
+sample <- "in3257_2_S1.sorted"
 
-# load the data
 json <-
   jsonlite::fromJSON(readLines(paste(getwd(), "/", sample, ".json", sep = "")))
 
@@ -159,6 +158,28 @@ plt <- ggplot(qualities_by_base, aes(x = seq_along(as))) +
   theme_ipsum()
 
 png(paste(sample, ".base-qual-dist.png", sep = ""), width = 800, height = 600)
+print(plt)
+dev.off()
+
+# plot quality distributions
+quality_dist <- data.frame(
+  qs = json$qualityDistribution$qualities
+)
+
+plt <- ggplot(quality_dist, aes(x = seq_along(qs))) +
+  geom_col(aes(y = qs), fill = "#7faf7f") +
+  scale_y_continuous(labels = scales::comma, trans = "log10") +
+  labs(
+    color = "",
+    title = "Quality distribution",
+    subtitle = paste("Sample ", sample, sep = ""),
+    x = "Quality (phred)",
+    y = "# of bases (log)",
+    caption = "Species: SARS-CoV-2"
+  ) +
+  theme_ipsum()
+
+png(paste(sample, ".qual-dist.png", sep = ""), width = 800, height = 600)
 print(plt)
 dev.off()
 
