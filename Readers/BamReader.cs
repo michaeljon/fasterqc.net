@@ -164,6 +164,12 @@ namespace Ovation.FasterQC.Net
             {
                 bamAlignment.qual = Array.Empty<byte>();
             }
+            offset += (int)bamAlignment.l_seq;
+
+            while (offset < block_size)
+            {
+                _ = new BamOptionalElement(block, ref offset);
+            }
 
             return bamAlignment;
         }
