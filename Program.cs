@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
 using CommandLine;
+using CommandLine.Text;
 using Ovation.FasterQC.Net.Modules;
 using Ovation.FasterQC.Net.Readers;
 using Ovation.FasterQC.Net.Utils;
@@ -31,12 +32,22 @@ namespace Ovation.FasterQC.Net
                 }
             );
 
-            _ = parser.ParseArguments<CliOptions>(args)
+            var parserResult = parser.ParseArguments<CliOptions>(args);
+            parserResult
                 .WithParsed(o =>
                     {
                         Settings = o;
                         new Program().Run();
-                    });
+                    })
+                .WithNotParsed(x =>
+                {
+                    var helpText = HelpText.AutoBuild(parserResult, h =>
+                    {
+                        h.AutoVersion = false;  // hides --version
+                        return HelpText.DefaultParsingErrorsHandler(parserResult, h);
+                    }, e => e);
+                    Console.Error.WriteLine(helpText);
+                });
         }
 
         private void Run()
