@@ -12,6 +12,8 @@ namespace Ovation.FasterQC.Net
 
         private readonly ulong[] polyG = new ulong[2];
 
+        private readonly ulong[] polyN = new ulong[2];
+
         private ulong sequenceCount;
 
         private ulong tooShort;
@@ -31,8 +33,8 @@ namespace Ovation.FasterQC.Net
                     sequenceCount,
                     tooShort,
                     target = POLY_SIZE,
-                    head = new { a = polyA[0], t = polyT[0], c = polyC[0], g = polyG[0] },
-                    tail = new { a = polyA[1], t = polyT[1], c = polyC[1], g = polyG[1] },
+                    head = new { a = polyA[0], t = polyT[0], c = polyC[0], g = polyG[0], n = polyN[0] },
+                    tail = new { a = polyA[1], t = polyT[1], c = polyC[1], g = polyG[1], n = polyN[1] },
                 };
             }
         }
@@ -58,6 +60,9 @@ namespace Ovation.FasterQC.Net
 
             if (CheckPolyHead((byte)'G', sequence.Read) == true) polyG[0]++;
             if (CheckPolyTail((byte)'G', sequence.Read) == true) polyG[1]++;
+
+            if (CheckPolyHead((byte)'N', sequence.Read) == true) polyN[0]++;
+            if (CheckPolyTail((byte)'N', sequence.Read) == true) polyN[1]++;
         }
 
         public void Reset()
@@ -66,6 +71,7 @@ namespace Ovation.FasterQC.Net
             polyT[0] = 0; polyT[1] = 0;
             polyC[0] = 0; polyC[1] = 0;
             polyG[0] = 0; polyG[1] = 0;
+            polyN[0] = 0; polyN[1] = 0;
 
             sequenceCount = 0;
             tooShort = 0;
