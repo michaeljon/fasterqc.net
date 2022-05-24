@@ -1,35 +1,58 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using Ovation.FasterQC.Net.Utils;
 
 namespace Ovation.FasterQC.Net.Modules
 {
     public static class ModuleFactory
     {
-        private static readonly Dictionary<string, IQcModule> moduleMap = new()
+        private static Dictionary<string, IQcModule>? moduleMap;
+
+        public static Dictionary<string, IQcModule> ModuleMap
         {
-            ["AlignmentStatistics"] = new AlignmentStatistics(),
-            ["BasicStatistics"] = new BasicStatistics(),
-            ["KMerContent"] = new KMerContent(),
-            ["NCountsAtPosition"] = new NCountsAtPosition(),
-            ["PerPositionSequenceContent"] = new PerPositionSequenceContent(),
-            ["PerSequenceGcContent"] = new PerSequenceGcContent(),
-            ["QualityDistributionByBase"] = new QualityDistributionByBase(),
-            ["MeanQualityDistribution"] = new MeanQualityDistribution(),
-            ["SequenceLengthDistribution"] = new SequenceLengthDistribution(),
-            ["PerPositionQuality"] = new PerPositionQuality(),
-        };
+            get
+            {
+                if (moduleMap == null)
+                {
+                    moduleMap = new Dictionary<string, IQcModule>();
+
+                    var modules = Assembly.GetExecutingAssembly()
+                        .GetTypes()
+                        .Where(t => string.IsNullOrEmpty(t.Namespace) == false && t.GetInterface(nameof(IQcModule)) != null)
+                        .Select(t => Activator.CreateInstance(t))
+                        .Cast<IQcModule>();
+
+                    foreach (var module in modules)
+                    {
+                        moduleMap.Add(module.GetType().Name, module);
+                    }
+                }
+
+                return moduleMap;
+            }
+        }
 
         public static IEnumerable<IQcModule> Create(CliOptions settings)
         {
             if (settings.ModuleNames.Any() == false || settings.ModuleNames.First() == "all")
             {
-                settings.ModuleNames = moduleMap.Keys;
-                return moduleMap.Values;
+                var moduleNames = new List<string>();
+                var modules = new List<IQcModule>();
+
+                foreach (var module in ModuleMap.Where(m => m.Value.IsEnabledForAll == true))
+                {
+                    moduleNames.Add(module.Key);
+                    modules.Add(module.Value);
+                }
+
+                settings.ModuleNames = moduleNames;
+                return modules;
             }
             else
             {
-                return settings.ModuleNames.Select(n => moduleMap[n]);
+                return settings.ModuleNames.Select(n => ModuleMap[n]);
             }
         }
     }

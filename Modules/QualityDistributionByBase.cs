@@ -8,8 +8,11 @@ namespace Ovation.FasterQC.Net
         private const byte ILLUMINA_BASE_ADJUSTMENT = 33;
 
         private readonly ulong[] aQuality = new ulong[128];
+
         private readonly ulong[] cQuality = new ulong[128];
+
         private readonly ulong[] tQuality = new ulong[128];
+
         private readonly ulong[] gQuality = new ulong[128];
 
         private byte lowestScore = byte.MaxValue;
@@ -19,6 +22,8 @@ namespace Ovation.FasterQC.Net
         public string Name => "qualityDistributionByBase";
 
         public string Description => "Calculates the quality distribution across all sequences";
+
+        public bool IsEnabledForAll => true;
 
         public object Data
         {

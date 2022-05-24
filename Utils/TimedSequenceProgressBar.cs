@@ -25,19 +25,27 @@ namespace Ovation.FasterQC.Net.Utils
 
         public void Update(bool force = false)
         {
-            var read = sequenceReader.SequencesRead;
-            var percent = sequenceReader.ApproximateCompletion;
+            var sequencesRead = sequenceReader.SequencesRead;
+            var approximateCompletion = sequenceReader.ApproximateCompletion;
 
-            if (force || read % CliOptions.UpdatePeriod == 0)
+            if (force || sequencesRead % CliOptions.UpdatePeriod == 0)
             {
-                if (percent > 0)
+                // if we're limiting the number of reads then the reader's
+                // approximation will be incorrect (it's based on file positions),
+                // so we'll do the math ourselves
+                if (CliOptions.Settings.ReadLimit < ulong.MaxValue)
                 {
-                    var remainingTime = elapsedTime.ElapsedMilliseconds / percent * 100.0;
+                    approximateCompletion = 100.0 * sequencesRead / CliOptions.Settings.ReadLimit;
+                }
+
+                if (approximateCompletion > 0)
+                {
+                    var remainingTime = elapsedTime.ElapsedMilliseconds / approximateCompletion * 100.0;
                     EstimatedDuration = TimeSpan.FromMilliseconds(remainingTime);
                 }
 
-                AsProgress<double>().Report(percent / 100.0);
-                Message = $"{read.WithSsiUnits()} sequences completed";
+                AsProgress<double>().Report(approximateCompletion / 100.0);
+                Message = $"{sequencesRead.WithSsiUnits()} sequences completed";
             }
         }
     }

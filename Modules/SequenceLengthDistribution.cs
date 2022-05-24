@@ -6,6 +6,7 @@ namespace Ovation.FasterQC.Net
     public class SequenceLengthDistribution : IQcModule
     {
         private int minimumReadLength = int.MaxValue;
+
         private int maximumReadLength = int.MinValue;
 
         private readonly IDictionary<int, ulong> lengths = new Dictionary<int, ulong>();
@@ -13,6 +14,8 @@ namespace Ovation.FasterQC.Net
         public string Name => "sequenceLengthDistribution";
 
         public string Description => "Calculates the sequence length distributions";
+
+        public bool IsEnabledForAll => true;
 
         public object Data
         {

@@ -8,11 +8,14 @@ namespace Ovation.FasterQC.Net
         private QualityMetric[] qualities = Array.Empty<QualityMetric>();
 
         private int minimumReadLength = int.MaxValue;
+
         private int maximumReadLength = int.MinValue;
 
         public string Name => "perPositionQuality";
 
         public string Description => "Calculates the per-position quality metrics";
+
+        public bool IsEnabledForAll => true;
 
         public object Data
         {

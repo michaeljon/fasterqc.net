@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using System.Text.Json;
 using CommandLine;
 using CommandLine.Text;
@@ -33,21 +34,36 @@ namespace Ovation.FasterQC.Net
             );
 
             var parserResult = parser.ParseArguments<CliOptions>(args);
-            parserResult
-                .WithParsed(o =>
+
+            parserResult.WithParsed(o =>
+                            {
+                                Settings = o;
+                                new Program().Run();
+                            })
+                        .WithNotParsed(errs => DisplayHelp(parserResult, errs));
+        }
+
+        static void DisplayHelp<T>(ParserResult<T> result, IEnumerable<Error> _)
+        {
+            var sb = new StringBuilder("List of available modules for --modules:").AppendLine();
+            foreach (var module in ModuleFactory.ModuleMap)
+            {
+                sb.AppendLine($"\t{module.Key} -> {module.Value.Description}");
+            }
+
+            var helpText = HelpText.AutoBuild(result,
+                    h =>
                     {
-                        Settings = o;
-                        new Program().Run();
-                    })
-                .WithNotParsed(x =>
-                {
-                    var helpText = HelpText.AutoBuild(parserResult, h =>
-                    {
-                        h.AutoVersion = false;  // hides --version
-                        return HelpText.DefaultParsingErrorsHandler(parserResult, h);
-                    }, e => e);
-                    Console.Error.WriteLine(helpText);
-                });
+                        h.AdditionalNewLineAfterOption = false;
+                        h.MaximumDisplayWidth = 120;
+                        h.AddPostOptionsText(sb.ToString());
+
+                        return HelpText.DefaultParsingErrorsHandler(result, h);
+                    },
+                    e => e
+                );
+
+            Console.Error.WriteLine(helpText);
         }
 
         private void Run()
@@ -60,7 +76,7 @@ namespace Ovation.FasterQC.Net
             On(Settings.ShowProgress, () => progressBar = new TimedSequenceProgressBar(sequenceReader));
             On(Settings.Verbose, () => Console.Error.WriteLine($"Processing {Settings.InputFilename}..."));
 
-            while (sequenceReader.ReadSequence(out Sequence? sequence) && sequenceReader.SequencesRead < Settings.ReadLimit)
+            while (sequenceReader.SequencesRead < Settings.ReadLimit && sequenceReader.ReadSequence(out Sequence? sequence))
             {
                 ArgumentNullException.ThrowIfNull(sequence);
 
@@ -81,9 +97,13 @@ namespace Ovation.FasterQC.Net
 
             Dictionary<string, object>? results = new()
             {
-                ["_modules"] = Settings.ModuleNames,
-                ["_inputFilename"] = Settings.InputFilename,
-                ["_outputFilename"] = string.IsNullOrWhiteSpace(Settings.OutputFilename) ? "STDOUT" : Settings.OutputFilename,
+                ["_metadata"] = new
+                {
+                    _modules = Settings.ModuleNames,
+                    _inputFilename = Settings.InputFilename,
+                    _outputFilename = string.IsNullOrWhiteSpace(Settings.OutputFilename) ? "STDOUT" : Settings.OutputFilename,
+                    _sequences = sequenceReader.SequencesRead
+                }
             };
 
             foreach (IQcModule? module in modules)
