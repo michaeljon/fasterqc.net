@@ -1,0 +1,81 @@
+<html>
+
+<head>
+    <style>
+        {{{cssContent}}}
+    </style>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+        {{{dataContent}}}
+    </script>
+    <script type="text/javascript">
+        google.charts.load('current', { 'packages': ['corechart'] });
+        google.charts.setOnLoadCallback(drawCharts);
+
+        function drawCharts() {
+            drawAdapterContent("adapterContent_graph", fasterqc_data.adapterContent);
+            drawBasicStats("basicStats_table", fasterqc_data.basicStats);
+        }
+
+        function drawBasicStats(divId, dataRoot) {
+            let content = "<table class='basicStats'>";
+
+            Object.entries(dataRoot).forEach( kvp => {
+                content += `<tr><td>${kvp[0]}</td><td>${kvp[1]}</td></tr>`;
+            });
+
+            content += "</table>";
+
+            document.getElementById(divId).innerHTML = content;
+        }
+
+        function drawAdapterContent(divName, dataRoot) {
+            if (dataRoot === undefined) {
+                return;
+            }
+
+            const ac = dataRoot;
+            let rawData = [["Position in read (bp)", ...ac.platforms]];
+
+            for (let j = 0; j < ac.data[0].length; j++) {
+                let line = [ac.xLabels[j]];
+                for (let i = 0; i < ac.platforms.length; i++) {
+                    line.push(ac.data[i][j]);
+                }
+                rawData.push(line);
+            }
+
+            const data = google.visualization.arrayToDataTable(rawData);
+
+            const options = {
+                title: '% Adapter',
+                legend: { position: 'bottom' }
+            };
+
+            const chart = new google.visualization.LineChart(document.getElementById('adapterContent_graph'));
+
+            chart.draw(data, options);
+        }
+    </script>
+</head>
+
+<body>
+    <div class="toc">
+        <h1>Table of contents</h1>
+        <ul>
+            <li><a href="#basicStats">Basic Statistics</a></li>
+            <li><a href="#adapterContent">Adapter Content</a></li>
+        </ul>
+    </div>
+    <div class="content">
+        <h1>Basic Statistics</h1>
+        <a name="basicStats"></a>
+        <div id="basicStats_table"></div>
+
+        <h1>Adapter Content</h1>
+        <a name="adapterContent"></a>
+        <div id="adapterContent_graph" style="width: 900px; height: 500px"></div>
+    </div>
+</body>
+
+</html>

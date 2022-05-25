@@ -12,17 +12,15 @@
       // If you have changed target frameworks, make sure to update the program path.
       "program": "${workspaceFolder}/bin/Debug/net6.0/Ovation.FasterQC.Net.dll",
       "args": [
-        "-d",
-        "-l",
-        "10",
+        "-p",
         "-f",
         "bam",
         "-i",
-        "./tmp/in3257_2_S1.sorted.bam",
+        "tmp/zr6254_1.sorted.bam",
         "-o",
         "./tmp/bob.json",
-        "-m",
-        "BasicStatistics"
+        "-h",
+        "tmp/zr6254_1.sorted.html"
       ],
       "cwd": "${workspaceFolder}",
       // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console

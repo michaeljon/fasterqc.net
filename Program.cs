@@ -5,6 +5,7 @@ using System.Text;
 using System.Text.Json;
 using CommandLine;
 using CommandLine.Text;
+using HandlebarsDotNet;
 using Ovation.FasterQC.Net.Modules;
 using Ovation.FasterQC.Net.Readers;
 using Ovation.FasterQC.Net.Utils;
@@ -121,6 +122,17 @@ namespace Ovation.FasterQC.Net
             else
             {
                 File.WriteAllText(Settings.OutputFilename, JsonSerializer.Serialize(results, options));
+            }
+
+            if (Settings.HtmlOut is not null)
+            {
+                var template = Handlebars.Compile(File.ReadAllText("templates/html_template.handlebars"));
+                var data = new Dictionary<string, string>
+                {
+                    ["dataContent"] = "var fasterqc_data = " + JsonSerializer.Serialize(results, options),
+                    ["cssContent"] = File.ReadAllText("templates/html_template.css")
+                };
+                File.WriteAllText(Settings.HtmlOut, template(data));
             }
         }
 

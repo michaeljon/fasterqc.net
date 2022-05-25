@@ -27,8 +27,11 @@ namespace Ovation.FasterQC.Net.Utils
         [Option('m', "modules", Required = false, Default = new string[] { "all" }, HelpText = "Space-separated list of modules to run, or 'all'.")]
         public IEnumerable<string> ModuleNames { get; set; } = Array.Empty<string>();
 
-        [Option('l', "read-limit", Required = false, HelpText = "Limit the number of reads processed")]
+        [Option('l', "read-limit", Required = false, HelpText = "Limit the number of reads processed.")]
         public ulong ReadLimit { get; set; } = ulong.MaxValue;
+
+        [Option('h', "html", Required = false, HelpText = "Write self-contained HTML output to specified filename.")]
+        public string HtmlOut { get; set; } = null!;
 
         public static CliOptions Settings { get; set; } = null!;
 

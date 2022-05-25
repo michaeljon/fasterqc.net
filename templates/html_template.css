@@ -1,0 +1,28 @@
+body {
+  font-family: Helvetica, Arial, Sans-Serif;
+}
+
+h1 {
+    font-size: 1.25em;
+}
+
+.toc {
+  height: 100%;
+  width: 200px;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  overflow-x: hidden;
+  padding-top: 20px;
+  background-color: rgb(215, 199, 199);
+}
+
+.content {
+  margin-left: 200px;
+  padding: 0px 10px;
+}
+
+.basicStats {
+    margin-left: 25px;
+}
