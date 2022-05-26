@@ -15,13 +15,15 @@
         function drawCharts() {
             drawAdapterContent("adapterContent_graph", fasterqc_data.adapterContent);
             drawBasicStats("basicStats_table", fasterqc_data.basicStats);
+            drawKmerContent("kmerContent_table", fasterqc_data.kmerContent);
+            drawPerBaseSeqContent("perBaseSeqContent_graph", fasterqc_data.baseCounts);
         }
 
         function drawBasicStats(divId, dataRoot) {
             let content = "<table class='basicStats'>";
 
             Object.entries(dataRoot).forEach( kvp => {
-                content += `<tr><td>${kvp[0]}</td><td>${kvp[1]}</td></tr>`;
+                content += `<tr><td class='monospace'>${kvp[0]}</td><td class='numeric'>${kvp[1].toLocaleString('en', {useGrouping:true})}</td></tr>`;
             });
 
             content += "</table>";
@@ -29,7 +31,7 @@
             document.getElementById(divId).innerHTML = content;
         }
 
-        function drawAdapterContent(divName, dataRoot) {
+        function drawAdapterContent(divId, dataRoot) {
             if (dataRoot === undefined) {
                 return;
             }
@@ -52,7 +54,43 @@
                 legend: { position: 'bottom' }
             };
 
-            const chart = new google.visualization.LineChart(document.getElementById('adapterContent_graph'));
+            const chart = new google.visualization.LineChart(document.getElementById(divId));
+
+            chart.draw(data, options);
+        }
+
+        function drawKmerContent(divId, dataRoot) {
+            let content = "<table class='kmerContent'>";
+            const top20 = Object.entries(dataRoot).sort((a,b) => b[1] - a[1]).slice(0,20);
+
+            Object.entries(top20).forEach( kvp => {
+                content += `<tr><td class='monospace'>${kvp[1][0]}</td><td class='numeric'>${kvp[1][1].toLocaleString('en', {useGrouping:true})}</td></tr>`;
+            });
+
+            content += "</table>";
+
+            document.getElementById(divId).innerHTML = content;
+        }
+
+        function drawPerBaseSeqContent(divId, dataRoot) {
+            if (dataRoot === undefined) {
+                return;
+            }
+
+            let rawData = [["Position in read (bp)", "%A", "%T", "%C", "%G"]];
+
+            for (let i=0; i < dataRoot.aPercentage.length; i++) {
+                rawData.push([i, dataRoot.aPercentage[i], dataRoot.tPercentage[i], dataRoot.cPercentage[i], dataRoot.gPercentage[i]]);
+            }
+
+            const data = google.visualization.arrayToDataTable(rawData);
+
+            const options = {
+                title: 'Sequence content across all bases',
+                legend: { position: 'bottom' }
+            };
+
+            const chart = new google.visualization.LineChart(document.getElementById(divId));
 
             chart.draw(data, options);
         }
@@ -65,6 +103,8 @@
         <ul>
             <li><a href="#basicStats">Basic Statistics</a></li>
             <li><a href="#adapterContent">Adapter Content</a></li>
+            <li><a href="#kmerContent">Kmer Content</a></li>
+            <li><a href="#perBaseSeqContent">Per-base sequence content</a></li>
         </ul>
     </div>
     <div class="content">
@@ -72,9 +112,24 @@
         <a name="basicStats"></a>
         <div id="basicStats_table"></div>
 
+        <div class="spacer"></div>
+
         <h1>Adapter Content</h1>
         <a name="adapterContent"></a>
         <div id="adapterContent_graph" style="width: 900px; height: 500px"></div>
+
+        <div class="spacer"></div>
+
+        <h1>Kmer Content</h1>
+        <a name="kmerContent"></a>
+        (top 20)
+        <div id="kmerContent_table" style="width: 900px; height: 500px"></div>
+
+        <div class="spacer"></div>
+
+        <h1>Per-base sequence content</h1>
+        <a name="perBaseSeqContent"></a>
+        <div id="perBaseSeqContent_graph" style="width: 900px; height: 500px"></div>
     </div>
 </body>
 

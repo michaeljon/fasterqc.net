@@ -26,3 +26,20 @@ h1 {
 .basicStats {
     margin-left: 25px;
 }
+
+.kmerContent {
+    margin-left: 25px;
+}
+
+.spacer {
+    padding-top: 15px;
+}
+
+.monospace {
+    font-family: monospace, monospace;
+    font-size: .9em;
+}
+
+.numeric {
+    padding-left: 10px;
+}
