@@ -1,73 +1,26 @@
 using System;
 using System.Globalization;
 using System.IO;
-using System.IO.Compression;
 using System.Text;
 using static Ovation.FasterQC.Net.Utils.CliOptions;
 
 namespace Ovation.FasterQC.Net
 {
-    public class SamReader : ISequenceReader
+    public class SamReader : AbstractReader
     {
-        private readonly FileStream inputStream;
-
-        private readonly GZipStream? gzipStream;
-
-        private readonly BufferedStream bufferedStream;
-
         private readonly StreamReader streamReader;
 
         private bool disposedValue;
 
-        private ulong sequencesRead = 0;
-
-        public ulong SequencesRead => sequencesRead;
-
         public SamReader(string sam, bool gzipped = true)
+            : base(sam, gzipped)
         {
-            var bufferSize = 128 * 1024;
-
-            var fileStreamOptions = new FileStreamOptions()
-            {
-                Mode = FileMode.Open,
-                BufferSize = bufferSize,
-            };
-
-            if (gzipped == true)
-            {
-                inputStream = File.Open(sam, fileStreamOptions);
-                gzipStream = new GZipStream(inputStream, CompressionMode.Decompress);
-                bufferedStream = new BufferedStream(gzipStream, bufferSize);
-                streamReader = new StreamReader(bufferedStream, Encoding.ASCII, false, bufferSize);
-            }
-            else
-            {
-                inputStream = File.Open(sam, fileStreamOptions);
-                bufferedStream = new BufferedStream(inputStream, bufferSize);
-                streamReader = new StreamReader(bufferedStream, Encoding.ASCII, false, bufferSize);
-            }
+            streamReader = new StreamReader(bufferedStream, Encoding.ASCII, false, bufferSize);
 
             ConsumeHeader();
         }
 
-        private void ConsumeHeader()
-        {
-            try
-            {
-                while (streamReader.Peek() == '@')
-                {
-                    var header = streamReader.ReadLine();
-                    On(Settings.Debug, () => Console.Error.WriteLine(header));
-                }
-            }
-            catch (EndOfStreamException)
-            {
-                // swallow this, we've run out of file and a call
-                // into ReadSequence will handle the EOF case
-            }
-        }
-
-        public bool ReadSequence(out Sequence? sequence)
+        public override bool ReadSequence(out Sequence? sequence)
         {
             try
             {
@@ -108,29 +61,34 @@ namespace Ovation.FasterQC.Net
             return false;
         }
 
-        public double ApproximateCompletion =>
-            100.0 * inputStream.Position / inputStream.Length;
+        private void ConsumeHeader()
+        {
+            try
+            {
+                while (streamReader.Peek() == '@')
+                {
+                    var header = streamReader.ReadLine();
+                    On(Settings.Debug, () => Console.Error.WriteLine(header));
+                }
+            }
+            catch (EndOfStreamException)
+            {
+                // swallow this, we've run out of file and a call
+                // into ReadSequence will handle the EOF case
+            }
+        }
 
-        protected virtual void Dispose(bool disposing)
+        protected override void Dispose(bool disposing)
         {
             if (!disposedValue)
             {
                 if (disposing)
                 {
                     streamReader?.Dispose();
-                    bufferedStream?.Dispose();
-                    gzipStream?.Dispose();
-                    inputStream?.Dispose();
                 }
 
                 disposedValue = true;
             }
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
         }
     }
 }

@@ -1,46 +1,25 @@
 using System;
 using System.IO;
-using System.IO.Compression;
 using System.Text;
 using static Ovation.FasterQC.Net.Utils.CliOptions;
 
 namespace Ovation.FasterQC.Net
 {
-    public class BamReader : ISequenceReader
+    public class BamReader : AbstractReader
     {
-        private readonly FileStream inputStream;
-
-        private readonly GZipStream gzipStream;
-
-        private readonly BufferedStream bufferedStream;
-
         private readonly BinaryReader binaryReader;
 
         private bool disposedValue;
 
-        private ulong sequencesRead = 0;
-
-        public ulong SequencesRead => sequencesRead;
-
-        public BamReader(string bam)
+        public BamReader(string bam) :
+            base(bam, false)
         {
-            var bufferSize = 128 * 1024;
-
-            var fileStreamOptions = new FileStreamOptions()
-            {
-                Mode = FileMode.Open,
-                BufferSize = bufferSize,
-            };
-
-            inputStream = File.Open(bam, fileStreamOptions);
-            gzipStream = new GZipStream(inputStream, CompressionMode.Decompress);
-            bufferedStream = new BufferedStream(gzipStream, bufferSize);
             binaryReader = new BinaryReader(bufferedStream);
 
             ConsumeHeader();
         }
 
-        public bool ReadSequence(out Sequence? sequence)
+        public override bool ReadSequence(out Sequence? sequence)
         {
             try
             {
@@ -56,9 +35,6 @@ namespace Ovation.FasterQC.Net
                 return false;
             }
         }
-
-        public double ApproximateCompletion =>
-            100.0 * inputStream.Position / inputStream.Length;
 
         private void ConsumeHeader()
         {
@@ -174,26 +150,17 @@ namespace Ovation.FasterQC.Net
             return bamAlignment;
         }
 
-        protected virtual void Dispose(bool disposing)
+        protected override void Dispose(bool disposing)
         {
             if (!disposedValue)
             {
                 if (disposing)
                 {
                     binaryReader?.Dispose();
-                    bufferedStream?.Dispose();
-                    gzipStream?.Dispose();
-                    inputStream?.Dispose();
                 }
 
                 disposedValue = true;
             }
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
         }
     }
 }

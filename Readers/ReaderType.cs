@@ -6,10 +6,6 @@ namespace Ovation.FasterQC.Net
 
         FastqGz,
 
-        FastqLine,
-
-        FastqLineGz,
-
         Sam,
 
         SamGz,

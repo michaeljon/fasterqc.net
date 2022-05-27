@@ -12,9 +12,6 @@ namespace Ovation.FasterQC.Net.Readers
                 ReaderType.Fastq => new FastqReader(settings.InputFilename, false),
                 ReaderType.FastqGz => new FastqReader(settings.InputFilename, true),
 
-                ReaderType.FastqLine => new FastqLineReader(settings.InputFilename, false),
-                ReaderType.FastqLineGz => new FastqLineReader(settings.InputFilename, true),
-
                 ReaderType.Sam => new SamReader(settings.InputFilename, false),
                 ReaderType.SamGz => new SamReader(settings.InputFilename, true),
 
