@@ -30,6 +30,7 @@ namespace Ovation.FasterQC.Net
                     config.AutoHelp = true;
                     config.AutoVersion = true;
                     config.CaseInsensitiveEnumValues = true;
+                    config.EnableDashDash = false;
                 }
             );
 
@@ -76,6 +77,8 @@ namespace Ovation.FasterQC.Net
             On(Settings.ShowProgress, () => progressBar = new TimedSequenceProgressBar(sequenceReader));
             On(Settings.Verbose, () => Console.Error.WriteLine($"Processing {Settings.InputFilename}..."));
 
+            var started = DateTime.UtcNow;
+
             while (sequenceReader.SequencesRead < Settings.ReadLimit && sequenceReader.ReadSequence(out Sequence? sequence))
             {
                 ArgumentNullException.ThrowIfNull(sequence);
@@ -95,6 +98,9 @@ namespace Ovation.FasterQC.Net
                 });
             }
 
+            var ended = DateTime.UtcNow;
+            var elapsed = ended.Subtract(started).TotalSeconds;
+
             Dictionary<string, object>? results = new()
             {
                 ["_metadata"] = new
@@ -102,7 +108,11 @@ namespace Ovation.FasterQC.Net
                     _modules = Settings.ModuleNames,
                     _inputFilename = Settings.InputFilename,
                     _outputFilename = string.IsNullOrWhiteSpace(Settings.OutputFilename) ? "STDOUT" : Settings.OutputFilename,
-                    _sequences = sequenceReader.SequencesRead
+                    _sequences = sequenceReader.SequencesRead,
+                    _started = started,
+                    _ended = ended,
+                    _elapsed = elapsed,
+                    _rate = (double)sequenceReader.SequencesRead / (double)elapsed
                 }
             };
 
