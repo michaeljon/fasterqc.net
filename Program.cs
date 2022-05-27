@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Text.Json;
 using CommandLine;
@@ -71,6 +72,12 @@ namespace Ovation.FasterQC.Net
         {
             using ISequenceReader? sequenceReader = ReaderFactory.Create(Settings);
             IEnumerable<IQcModule>? modules = ModuleFactory.Create(Settings);
+
+            if (modules.Any() == false)
+            {
+                Console.Error.WriteLine($"No modules matched or at least one unknown module requested.");
+                return;
+            }
 
             Console.Error.WriteLine($"Running modules:\n  {string.Join("\n  ", Settings.ModuleNames)}");
 

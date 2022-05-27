@@ -50,6 +50,8 @@ namespace Ovation.FasterQC.Net
 
         public bool IsEnabledForAll => true;
 
+        public ReaderType SupportedReaders => ReaderType.AlignedReaders;
+
         public string Description => "Calculates alignment statistics for SAM/BAM files";
 
         public void ProcessSequence(Sequence sequence)

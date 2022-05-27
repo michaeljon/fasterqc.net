@@ -1,15 +1,24 @@
+using System;
+
 namespace Ovation.FasterQC.Net
 {
+    [Flags]
     public enum ReaderType
     {
-        Fastq,
+        Fastq = 1,
 
-        FastqGz,
+        FastqGz = 2,
 
-        Sam,
+        UnalignedReaders = Fastq | FastqGz,
 
-        SamGz,
+        Sam = 4,
 
-        Bam
+        SamGz = 8,
+
+        Bam = 16,
+
+        AlignedReaders = Sam | SamGz | Bam,
+
+        AllReaders = UnalignedReaders | AlignedReaders
     }
 }

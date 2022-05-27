@@ -15,6 +15,8 @@ namespace Ovation.FasterQC.Net
 
         public bool IsEnabledForAll => true;
 
+        public ReaderType SupportedReaders => ReaderType.AllReaders;
+
         public object Data => gcCounts.Select(a => Math.Round((double)a / (double)sequenceCount * 100.0, 3));
 
         public void ProcessSequence(Sequence sequence)

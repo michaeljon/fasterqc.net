@@ -25,6 +25,8 @@ namespace Ovation.FasterQC.Net
 
         public bool IsEnabledForAll => true;
 
+        public ReaderType SupportedReaders => ReaderType.AllReaders;
+
         public object Data
         {
             get

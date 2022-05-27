@@ -9,6 +9,8 @@ namespace Ovation.FasterQC.Net
 
         bool IsEnabledForAll { get; }
 
+        ReaderType SupportedReaders { get; }
+
         void ProcessSequence(Sequence sequence);
 
         void Reset();

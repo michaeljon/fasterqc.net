@@ -28,6 +28,8 @@ namespace Ovation.FasterQC.Net
 
         public bool IsEnabledForAll => true;
 
+        public ReaderType SupportedReaders => ReaderType.AllReaders;
+
         public void ProcessSequence(Sequence sequence)
         {
             var sequenceLength = sequence.Read.Length;

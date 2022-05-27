@@ -18,6 +18,8 @@ namespace Ovation.FasterQC.Net
 
         public string Description => "Calculates ATCG counts at position along sequence";
 
+        public ReaderType SupportedReaders => ReaderType.AllReaders;
+
         public bool IsEnabledForAll => true;
 
         public object Data
