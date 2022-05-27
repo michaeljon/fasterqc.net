@@ -4,6 +4,9 @@
   "[cs]": {
     "editor.formatOnSave": true
   },
+  "[html]": {
+    "editor.formatOnSave": true
+  },
   "search.exclude": {
     "**/.git": true,
     "**/tmp": true,
