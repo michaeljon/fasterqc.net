@@ -12,7 +12,7 @@ namespace Ovation.FasterQC.Net
         private bool disposedValue;
 
         public BamReader(string bam) :
-            base(bam, false)
+            base(bam, true)
         {
             binaryReader = new BinaryReader(bufferedStream);
 

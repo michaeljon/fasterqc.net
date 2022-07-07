@@ -40,14 +40,14 @@ namespace Ovation.FasterQC.Net
         /// <summary>
         /// the first segment in the template (is read1)
         /// </summary>
-        FirstSegment = 64,
+        Read1 = 64,
 
         /// <summary>
         /// the last segment in the template (is read2)
         /// </summary>
-        LastSegment = 128,
+        Read2 = 128,
 
-        EmbeddedSegment = FirstSegment | LastSegment,
+        EmbeddedSegment = Read1 | Read2,
 
         /// <summary>
         /// not primary alignment

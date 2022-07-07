@@ -24,9 +24,9 @@ namespace Ovation.FasterQC.Net
 
         private ulong nextSegmentReverseComplemented;
 
-        private ulong firstSegment;
+        private ulong readOne;
 
-        private ulong lastSegment;
+        private ulong readTwo;
 
         private ulong embeddedSegment;
 
@@ -84,8 +84,8 @@ namespace Ovation.FasterQC.Net
             if ((sequence.ReadFlag & ReadFlag.ReverseComplemented) != 0) reverseComplemented++;
             if ((sequence.ReadFlag & ReadFlag.NextSegmentReverseComplemented) != 0) nextSegmentReverseComplemented++;
 
-            if ((sequence.ReadFlag & ReadFlag.FirstSegment) != 0) firstSegment++;
-            if ((sequence.ReadFlag & ReadFlag.LastSegment) != 0) lastSegment++;
+            if ((sequence.ReadFlag & ReadFlag.Read1) != 0) readOne++;
+            if ((sequence.ReadFlag & ReadFlag.Read2) != 0) readTwo++;
             if ((sequence.ReadFlag & (ReadFlag.EmbeddedSegment)) == ReadFlag.EmbeddedSegment) embeddedSegment++;
             if ((sequence.ReadFlag & (ReadFlag.EmbeddedSegment)) == 0) unknownIndex++;
 
@@ -132,8 +132,8 @@ namespace Ovation.FasterQC.Net
                     nextSegmentUnmapped,
                     reverseComplemented,
                     nextSegmentReverseComplemented,
-                    firstSegment,
-                    lastSegment,
+                    readOne,
+                    readTwo,
                     embeddedSegment,
                     unknownIndex,
                     primaryAlignment,

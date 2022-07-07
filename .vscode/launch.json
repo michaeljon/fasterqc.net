@@ -13,16 +13,14 @@
       "program": "${workspaceFolder}/bin/Debug/net6.0/Ovation.FasterQC.Net.dll",
       "args": [
         "-d",
-        "-l",
-        "10",
         "-f",
         "bam",
         "-i",
-        "./tmp/in3257_2_S1.sorted.bam",
+        "/Volumes/Untitled/experiment/OUT/bob/6111_S7_L001/6111_S7_L001.aligned.bam",
         "-o",
-        "./tmp/bob.json",
+        "/Volumes/Untitled/experiment/OUT/bob/bob.json",
         "-m",
-        "BasicStatistics"
+        "MultiQC"
       ],
       "cwd": "${workspaceFolder}",
       // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console
