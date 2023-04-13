@@ -8,21 +8,21 @@ namespace Ovation.FasterQC.Net.Modules
 {
     public static class ModuleFactory
     {
-        private static Dictionary<string, IQcModule>? moduleMap;
+        private static Dictionary<string, IQcModule<object, object>>? moduleMap;
 
-        public static Dictionary<string, IQcModule> ModuleMap
+        public static Dictionary<string, IQcModule<object, object>> ModuleMap
         {
             get
             {
                 if (moduleMap == null)
                 {
-                    moduleMap = new Dictionary<string, IQcModule>();
+                    moduleMap = new Dictionary<string, IQcModule<object, object>>();
 
                     var modules = Assembly.GetExecutingAssembly()
                         .GetTypes()
-                        .Where(t => string.IsNullOrEmpty(t.Namespace) == false && t.GetInterface(nameof(IQcModule)) != null)
+                        .Where(t => string.IsNullOrEmpty(t.Namespace) == false && t.GetInterface(nameof(IQcModule<object, object>)) != null)
                         .Select(t => Activator.CreateInstance(t))
-                        .Cast<IQcModule>();
+                        .Cast<IQcModule<object, object>>();
 
                     foreach (var module in modules)
                     {
@@ -34,10 +34,10 @@ namespace Ovation.FasterQC.Net.Modules
             }
         }
 
-        public static IEnumerable<IQcModule> Create(CliOptions settings)
+        public static IEnumerable<IQcModule<object, object>> Create(CliOptions settings)
         {
             var moduleNames = new List<string>();
-            var modules = new List<IQcModule>();
+            var modules = new List<IQcModule<object, object>>();
 
             if (settings.ModuleNames.Any() == false || settings.ModuleNames.First() == "all")
             {

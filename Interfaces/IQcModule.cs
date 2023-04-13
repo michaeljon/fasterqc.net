@@ -1,7 +1,9 @@
 
+using System.Collections.Generic;
+
 namespace Ovation.FasterQC.Net
 {
-    public interface IQcModule
+    public interface IQcModule<TM, TR>
     {
         string Name { get; }
 
@@ -11,10 +13,8 @@ namespace Ovation.FasterQC.Net
 
         ReaderType SupportedReaders { get; }
 
-        void ProcessSequence(Sequence sequence);
+        TM Map(IEnumerable<Sequence> sequences);
 
-        void Reset();
-
-        object Data { get; }
+        TR Reduce(IEnumerable<TM> mapResults);
     }
 }

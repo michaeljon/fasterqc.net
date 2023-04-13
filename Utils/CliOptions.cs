@@ -30,6 +30,9 @@ namespace Ovation.FasterQC.Net.Utils
         [Option('l', "read-limit", Required = false, HelpText = "Limit the number of reads processed")]
         public ulong ReadLimit { get; set; } = ulong.MaxValue;
 
+        [Option('t', "threads", Required = true, HelpText = "Number of threads to use for file types that support parallel processing.")]
+        public int NumThreads { get; set; }
+
         public static CliOptions Settings { get; set; } = null!;
 
         public const int UpdatePeriod = 100_000;
